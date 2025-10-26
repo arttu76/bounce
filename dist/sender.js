@@ -23,12 +23,14 @@ window.__onGCastApiAvailable = function (isAvailable) {
         updateStatus('Cast API not available');
     }
 };
-// Also try initializing immediately if API is already loaded
-if (typeof chrome !== 'undefined' && chrome.cast && chrome.cast.isAvailable) {
-    initializeCastApi();
-}
 function initializeCastApi() {
     updateStatus('Cast API loaded, initializing...');
+    // Check if cast is actually available
+    if (typeof cast === 'undefined' || !cast.framework) {
+        updateStatus('Waiting for Cast SDK to load...');
+        setTimeout(initializeCastApi, 100);
+        return;
+    }
     const castContext = cast.framework.CastContext.getInstance();
     castContext.setOptions({
         receiverApplicationId: APPLICATION_ID,
