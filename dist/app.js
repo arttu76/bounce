@@ -146,7 +146,7 @@ function updateAnimations() {
     toRemove.forEach(circleData => {
         const explosionCenter = circleData.body.position;
         const explosionRadius = circleData.currentRadius * 10; // Affect circles within 10x radius
-        const explosionForce = 2.0; // Base force strength
+        const explosionForce = 6.0; // Base force strength
         // Apply outward velocity to nearby circles
         circles.forEach(otherCircle => {
             if (otherCircle !== circleData && !otherCircle.animationStartTime) {
