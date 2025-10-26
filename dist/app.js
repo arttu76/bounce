@@ -14,14 +14,7 @@ let nextColorIndex = 0; // Index for cycling through colors
 const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
 let spawnInterval = 500; // Current spawn interval in milliseconds
 const INITIAL_SPAWN_INTERVAL = 500; // Starting spawn interval
-const SPAWN_INTERVAL_DECREASE = 10; // Decrease by 10ms each spawn
-// Initialize the Cast Receiver SDK
-// @ts-ignore - Types loaded from CDN
-const context = cast.framework.CastReceiverContext.getInstance();
-// @ts-ignore
-const options = new cast.framework.CastReceiverOptions();
-// Start the receiver
-context.start(options);
+const SPAWN_INTERVAL_DECREASE = 0.1; // Decrease by 0.1ms each spawn (1% of original speed)
 // Get canvas
 const canvas = document.getElementById('canvas');
 // Matter.js is loaded globally from the script tag
@@ -389,6 +382,8 @@ function triggerGameOver() {
 }
 // Restart the game
 function restartGame() {
+    // Reset background color to black
+    document.body.style.backgroundColor = 'black';
     // Remove all circles
     circles.forEach(circle => {
         World.remove(engine.world, circle.body);
@@ -460,15 +455,40 @@ function updateAnimations() {
             }
         }
     });
-    // Check for game over condition: bubble that has touched another reaches top
-    circles.forEach(circle => {
-        if (circle.hasTouchedOther) {
-            const topY = circle.body.position.y - circle.currentRadius;
-            if (topY <= 0) {
-                triggerGameOver();
-            }
+    // Calculate median position and check game over / update background color
+    // Only consider bubbles that have touched others
+    const touchedCircles = circles.filter(c => c.hasTouchedOther);
+    if (touchedCircles.length >= 10) {
+        const yPositions = touchedCircles.map(c => c.body.position.y).sort((a, b) => a - b);
+        const targetPositions = yPositions.slice(3, 13);
+        const medianY = targetPositions.reduce((sum, y) => sum + y, 0) / targetPositions.length;
+        const dangerLineY = canvas.height * 0.05; // 5% from top
+        // Check for game over
+        if (medianY <= dangerLineY) {
+            triggerGameOver();
         }
-    });
+        // Update background color based on median position
+        // At 5% from top (danger): full red (#FF0000)
+        // At 50% from top (safe): black (#000000)
+        const safeY = canvas.height * 0.50;
+        let redAmount = 0;
+        if (medianY <= dangerLineY) {
+            redAmount = 255; // Full red
+        }
+        else if (medianY >= safeY) {
+            redAmount = 0; // Black
+        }
+        else {
+            // Linear interpolation between danger and safe
+            const progress = (medianY - dangerLineY) / (safeY - dangerLineY);
+            redAmount = Math.round(255 * (1 - progress));
+        }
+        document.body.style.backgroundColor = `rgb(${redAmount}, 0, 0)`;
+    }
+    else {
+        // Not enough touched circles - keep background black
+        document.body.style.backgroundColor = 'black';
+    }
     // Check for selection timeout
     if (selectedCircleIndex !== -1 && (now - lastInputTime) > SELECTION_TIMEOUT) {
         selectedCircleIndex = -1;
@@ -537,25 +557,6 @@ function updateAnimations() {
     ctx.fillStyle = '#ffffff';
     ctx.fillText(`${longestChain}`, centerX, 100);
     ctx.restore();
-    // Draw median line showing median Y position of all circles
-    if (circles.length > 0) {
-        // Get all Y positions and sort them
-        const yPositions = circles.map(c => c.body.position.y).sort((a, b) => a - b);
-        // Calculate median
-        const medianY = yPositions.length % 2 === 0
-            ? (yPositions[yPositions.length / 2 - 1] + yPositions[yPositions.length / 2]) / 2
-            : yPositions[Math.floor(yPositions.length / 2)];
-        // Draw horizontal line across entire screen
-        ctx.save();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.5; // Semi-transparent
-        ctx.beginPath();
-        ctx.moveTo(0, medianY);
-        ctx.lineTo(canvas.width, medianY);
-        ctx.stroke();
-        ctx.restore();
-    }
     requestAnimationFrame(updateAnimations);
 }
 // Start animation loop
