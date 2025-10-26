@@ -209,8 +209,25 @@ function navigateSelection(direction) {
         return;
     }
     const currentPos = currentCircle.body.position;
+    // Direction vector
+    let dirX = 0;
+    let dirY = 0;
+    switch (direction) {
+        case 'up':
+            dirY = -1;
+            break;
+        case 'down':
+            dirY = 1;
+            break;
+        case 'left':
+            dirX = -1;
+            break;
+        case 'right':
+            dirX = 1;
+            break;
+    }
     let bestIndex = -1;
-    let bestDistance = Number.MAX_VALUE;
+    let bestScore = Number.MAX_VALUE;
     circles.forEach((circle, index) => {
         if (index === selectedCircleIndex)
             return;
@@ -219,35 +236,33 @@ function navigateSelection(direction) {
         const dy = pos.y - currentPos.y;
         // Check if circle is in the correct direction
         let isValidDirection = false;
-        let directionalDistance = 0;
         switch (direction) {
             case 'up':
-                if (dy < -10) { // Must be significantly above
-                    isValidDirection = true;
-                    directionalDistance = Math.abs(dy) + Math.abs(dx) * 0.5; // Prefer vertical alignment
-                }
+                isValidDirection = dy < 0;
                 break;
             case 'down':
-                if (dy > 10) { // Must be significantly below
-                    isValidDirection = true;
-                    directionalDistance = Math.abs(dy) + Math.abs(dx) * 0.5;
-                }
+                isValidDirection = dy > 0;
                 break;
             case 'left':
-                if (dx < -10) { // Must be significantly to the left
-                    isValidDirection = true;
-                    directionalDistance = Math.abs(dx) + Math.abs(dy) * 0.5; // Prefer horizontal alignment
-                }
+                isValidDirection = dx < 0;
                 break;
             case 'right':
-                if (dx > 10) { // Must be significantly to the right
-                    isValidDirection = true;
-                    directionalDistance = Math.abs(dx) + Math.abs(dy) * 0.5;
-                }
+                isValidDirection = dx > 0;
                 break;
         }
-        if (isValidDirection && directionalDistance < bestDistance) {
-            bestDistance = directionalDistance;
+        if (!isValidDirection)
+            return;
+        // Calculate distance
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Calculate how well aligned this circle is with the direction
+        // Dot product with direction vector divided by distance
+        const alignment = (dx * dirX + dy * dirY) / distance;
+        // Score: prioritize alignment (inverse), then distance
+        // Higher alignment (closer to 1) = better
+        // Lower distance = better
+        const score = distance * (2 - alignment);
+        if (score < bestScore) {
+            bestScore = score;
             bestIndex = index;
         }
     });
