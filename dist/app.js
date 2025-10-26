@@ -72,7 +72,7 @@ function addCircle() {
     const width = canvas.width;
     // Random size between 2% and 5% of screen width
     const visualRadius = width * (0.02 + Math.random() * 0.03);
-    const borderWidth = 2;
+    const borderWidth = 6; // 3x wider (was 2)
     // Physics body should include the border
     const physicsRadius = visualRadius + borderWidth / 2;
     // Random x position
