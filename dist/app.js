@@ -96,4 +96,4 @@ window.addEventListener('resize', handleResize);
 // Add circles periodically
 setInterval(() => {
     addCircle();
-}, 1000); // Add a new circle every second
+}, 500); // Add a new circle every 500ms

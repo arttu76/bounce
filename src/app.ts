@@ -1,3 +1,8 @@
+// Type imports at the top
+type MatterRender = import('matter-js').Render;
+type MatterBody = import('matter-js').Body;
+type MatterRunner = import('matter-js').Runner;
+
 // Initialize the Cast Receiver SDK
 // @ts-ignore - Types loaded from CDN
 const context = cast.framework.CastReceiverContext.getInstance();
@@ -19,11 +24,11 @@ const engine = Engine.create({
     gravity: { x: 0, y: 1, scale: 0.001 }
 });
 
-let render: import('matter-js').Render;
-let ground: import('matter-js').Body;
-let wallLeft: import('matter-js').Body;
-let wallRight: import('matter-js').Body;
-let runner: import('matter-js').Runner;
+let render: MatterRender;
+let ground: MatterBody;
+let wallLeft: MatterBody;
+let wallRight: MatterBody;
+let runner: MatterRunner;
 
 // Initialize physics world
 function initPhysics(width: number, height: number) {
@@ -119,4 +124,4 @@ window.addEventListener('resize', handleResize);
 // Add circles periodically
 setInterval(() => {
     addCircle();
-}, 1000); // Add a new circle every second
+}, 500); // Add a new circle every 500ms
