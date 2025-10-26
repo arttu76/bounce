@@ -163,34 +163,33 @@ function areTouching(circle1: CircleData, circle2: CircleData): boolean {
     return distance <= (circle1.currentRadius + circle2.currentRadius + 5); // Add 5px tolerance
 }
 
-// Find all touching circles of the same color recursively
-function findConnectedCircles(startCircle: CircleData, visited: Set<CircleData>): CircleData[] {
-    if (visited.has(startCircle)) {
-        return [];
+// Find all touching circles of the same color using iterative flood-fill
+function findConnectedCircles(startCircle: CircleData): CircleData[] {
+    // Pre-filter: only work with same-color bubbles for efficiency
+    const sameColorCircles = circles.filter(c => c.color === startCircle.color);
+
+    const connected = new Set<CircleData>([startCircle]);
+    const toCheck: CircleData[] = [startCircle];
+
+    // Iteratively find all touching bubbles
+    while (toCheck.length > 0) {
+        const current = toCheck.pop()!;
+
+        // Find touching bubbles from the same-color pool
+        sameColorCircles.forEach(otherCircle => {
+            if (!connected.has(otherCircle) && areTouching(current, otherCircle)) {
+                connected.add(otherCircle);
+                toCheck.push(otherCircle);
+            }
+        });
     }
 
-    visited.add(startCircle);
-    const connected: CircleData[] = [startCircle];
-
-    // Find all circles that touch this one and have the same color
-    circles.forEach(otherCircle => {
-        if (otherCircle !== startCircle &&
-            !visited.has(otherCircle) &&
-            otherCircle.color === startCircle.color &&
-            areTouching(startCircle, otherCircle)) {
-            // Recursively find connected circles
-            const moreConnected = findConnectedCircles(otherCircle, visited);
-            connected.push(...moreConnected);
-        }
-    });
-
-    return connected;
+    return Array.from(connected);
 }
 
 // Remove a circle and all touching circles of the same color
 function removeConnectedCircles(clickedCircle: CircleData) {
-    const visited = new Set<CircleData>();
-    const toRemove = findConnectedCircles(clickedCircle, visited);
+    const toRemove = findConnectedCircles(clickedCircle);
 
     // Remove all connected circles
     toRemove.forEach(circleData => {
