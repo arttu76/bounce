@@ -104,6 +104,62 @@ function handleResize() {
     const height = window.innerHeight;
     initPhysics(width, height);
 }
+// Explode a circle immediately (used for clicks and timed animations)
+function explodeCircle(circleData) {
+    const explosionCenter = circleData.body.position;
+    const explosionRadius = circleData.currentRadius * 10;
+    const explosionForce = 6.0;
+    // Spawn 100 green particles
+    for (let i = 0; i < 100; i++) {
+        const angle = (Math.PI * 2 * i) / 100;
+        const speed = (5 + Math.random() * 10) / 3;
+        const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
+        const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
+        const particleRadius = 2;
+        const particle = Bodies.circle(startX, startY, particleRadius, {
+            restitution: 0.3,
+            friction: 0.05,
+            render: {
+                fillStyle: '#00ff00',
+                strokeStyle: '#00ff00',
+                lineWidth: 1
+            }
+        });
+        Body.setVelocity(particle, {
+            x: Math.cos(angle) * speed,
+            y: Math.sin(angle) * speed
+        });
+        World.add(engine.world, particle);
+        particles.push({
+            body: particle,
+            createdAt: Date.now(),
+            initialRadius: particleRadius
+        });
+    }
+    // Apply outward velocity to nearby circles
+    circles.forEach(otherCircle => {
+        if (otherCircle !== circleData && !otherCircle.animationStartTime) {
+            const dx = otherCircle.body.position.x - explosionCenter.x;
+            const dy = otherCircle.body.position.y - explosionCenter.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < explosionRadius && distance > 0) {
+                const forceMagnitude = explosionForce * (1 - distance / explosionRadius);
+                const forceX = (dx / distance) * forceMagnitude;
+                const forceY = (dy / distance) * forceMagnitude;
+                Body.setVelocity(otherCircle.body, {
+                    x: otherCircle.body.velocity.x + forceX,
+                    y: otherCircle.body.velocity.y + forceY
+                });
+            }
+        }
+    });
+    // Remove the circle
+    World.remove(engine.world, circleData.body);
+    const index = circles.indexOf(circleData);
+    if (index > -1) {
+        circles.splice(index, 1);
+    }
+}
 // Handle mouse/touch clicks on circles
 canvas.addEventListener('click', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -116,8 +172,8 @@ canvas.addEventListener('click', (event) => {
         const dy = circleData.body.position.y - mouseY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance <= circleData.currentRadius) {
-            // Start explosion animation immediately
-            circleData.animationStartTime = Date.now();
+            // Explode immediately on click
+            explodeCircle(circleData);
             break; // Only explode one circle per click
         }
     }
@@ -166,66 +222,13 @@ function updateAnimations() {
     });
     // Remove completed animations with explosion effect
     toRemove.forEach(circleData => {
-        const explosionCenter = circleData.body.position;
-        const explosionRadius = circleData.currentRadius * 10; // Affect circles within 10x radius
-        const explosionForce = 6.0; // Base force strength (halved)
-        // Spawn 100 green particles
-        for (let i = 0; i < 100; i++) {
-            const angle = (Math.PI * 2 * i) / 100; // Evenly distributed around circle
-            const speed = 5 + Math.random() * 10; // Random speed between 5-15 (faster, more visible)
-            // Start particles at the circle's edge
-            const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
-            const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
-            const particle = Bodies.circle(startX, startY, 4, {
-                restitution: 0.3,
-                friction: 0.05,
-                render: {
-                    fillStyle: '#00ff00',
-                    strokeStyle: '#00ff00',
-                    lineWidth: 1
-                }
-            });
-            // Set initial velocity outward
-            Body.setVelocity(particle, {
-                x: Math.cos(angle) * speed,
-                y: Math.sin(angle) * speed
-            });
-            World.add(engine.world, particle);
-            particles.push({
-                body: particle,
-                createdAt: Date.now()
-            });
-        }
-        // Apply outward velocity to nearby circles
-        circles.forEach(otherCircle => {
-            if (otherCircle !== circleData && !otherCircle.animationStartTime) {
-                const dx = otherCircle.body.position.x - explosionCenter.x;
-                const dy = otherCircle.body.position.y - explosionCenter.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < explosionRadius && distance > 0) {
-                    // Force falls off with distance
-                    const forceMagnitude = explosionForce * (1 - distance / explosionRadius);
-                    // Normalize direction and apply force
-                    const forceX = (dx / distance) * forceMagnitude;
-                    const forceY = (dy / distance) * forceMagnitude;
-                    Body.setVelocity(otherCircle.body, {
-                        x: otherCircle.body.velocity.x + forceX,
-                        y: otherCircle.body.velocity.y + forceY
-                    });
-                }
-            }
-        });
-        World.remove(engine.world, circleData.body);
-        const index = circles.indexOf(circleData);
-        if (index > -1) {
-            circles.splice(index, 1);
-        }
+        explodeCircle(circleData);
     });
-    // Update particle colors and remove old ones
+    // Update particle colors, size, and remove old ones
     const particlesToRemove = [];
     particles.forEach(particle => {
         const age = now - particle.createdAt;
-        const lifeProgress = age / 5000; // 5 second lifetime
+        const lifeProgress = age / 1000; // 1 second lifetime
         if (lifeProgress >= 1) {
             particlesToRemove.push(particle);
         }
@@ -234,6 +237,13 @@ function updateAnimations() {
             const color = lerpColor('#00ff00', '#000000', lifeProgress);
             particle.body.render.fillStyle = color;
             particle.body.render.strokeStyle = color;
+            // Shrink particle as it ages (from 1.0 to 0.1 of initial size)
+            const targetScale = 1 - (lifeProgress * 0.9); // Scale from 1.0 to 0.1
+            const currentRadius = particle.initialRadius * targetScale;
+            const scaleFactor = currentRadius / (particle.body.circleRadius || particle.initialRadius);
+            if (scaleFactor > 0.01) { // Prevent scaling to zero
+                Body.scale(particle.body, scaleFactor, scaleFactor);
+            }
         }
     });
     particlesToRemove.forEach(particle => {
