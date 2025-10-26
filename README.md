@@ -1,36 +1,46 @@
-# Bounce - Physics Animation for Chromecast with Google TV
+# Bounce - Color-Matching Bubble Game for Chromecast with Google TV
 
-A physics-based animation app featuring falling circles, explosions, and particle effects. Built with TypeScript and Matter.js, deployable as both a web app and an Android TV app for Chromecast with Google TV.
+A physics-based bubble popping game featuring red, green, and blue bubbles. Built with TypeScript and Matter.js, deployable as both a web app and an Android TV app for Chromecast with Google TV.
 
 ## Features
 
 - **Physics-based Animation**: Realistic gravity and collision detection using Matter.js
-- **Dynamic Circles**: Randomly-sized circles that fall and bounce
-- **Explosion Effects**: Circles animate and explode after 6 seconds, or when clicked
-- **Particle System**: 50 green particles spawn from each explosion
+- **Color-Matching Gameplay**: Pop bubbles to remove all connected same-color bubbles
+- **Remote Control Support**: Navigate with D-pad, select with OK button
+- **Auto-Selection**: Automatically selects nearest bubble after popping
+- **Particle Effects**: 33 colored particles spawn from each explosion
 - **Resolution Independent**: Automatically adapts to any screen size
 - **Fullscreen Support**: Optimized for TV viewing experience
+- **Bubble Counter**: Shows number of bubbles on screen in real-time
+
+## How to Play
+
+1. **Navigate**: Use arrow keys (or Chromecast remote D-pad) to select bubbles
+2. **Pop**: Press Enter/Space (or Chromecast remote OK button) to pop selected bubble
+3. **Match Colors**: All connected same-color bubbles pop together recursively
+4. **Auto-Select**: After popping, the nearest bubble is automatically selected
+5. **Goal**: Clear as many bubbles as possible!
 
 ## Project Structure
 
 ```
 /Users/arttu/cc/
 ├── src/
-│   ├── app.ts              # Main receiver app with physics engine
+│   ├── app.ts              # Main game logic with physics engine
 │   ├── sender.ts           # Web-based sender for casting
 │   ├── index.html          # Receiver HTML page
 │   ├── sender.html         # Sender HTML page
 │   └── styles.css          # Styling
-├── dist/                   # Compiled JavaScript output
+├── dist/                   # Compiled JavaScript output (deployed to GitHub Pages)
 ├── android-app/            # Android TV app wrapper
 │   ├── app/
 │   │   ├── src/main/
 │   │   │   ├── AndroidManifest.xml
 │   │   │   ├── java/com/bounce/app/MainActivity.kt
 │   │   │   └── res/
-│   │   └── build.gradle
-│   ├── build.gradle
-│   ├── settings.gradle
+│   │   └── build.gradle.kts
+│   ├── build.gradle.kts
+│   ├── settings.gradle.kts
 │   └── README.md           # Android build & sideload instructions
 ├── package.json
 ├── tsconfig.receiver.json
@@ -42,17 +52,12 @@ A physics-based animation app featuring falling circles, explosions, and particl
 - **TypeScript**: Type-safe JavaScript development
 - **Matter.js**: 2D physics engine for realistic animations
 - **Google Cast SDK**: For casting functionality (web version)
-- **Kotlin**: Android TV app wrapper
+- **Kotlin**: Android TV app wrapper with WebView
 - **GitHub Pages**: Static hosting for web app
 
-## Web App Development
+## Quick Start
 
-### Prerequisites
-
-- Node.js and npm
-- Python 3 (for local dev server)
-
-### Setup
+### Web App Development
 
 ```bash
 # Install dependencies
@@ -61,261 +66,356 @@ npm install
 # Build TypeScript to JavaScript
 npm run build
 
-# Serve locally
+# Serve locally at http://localhost:22222
 npm run serve
-# App available at http://localhost:22222
+
+# Deploy to GitHub Pages
+npm run deploy
 ```
 
-### Deployment
+### Android App Development
 
-The web app is hosted on GitHub Pages at: https://arttu76.github.io/bounce/
+```bash
+# Build and install APK to connected Chromecast
+npm run android:deploy
+
+# Just build APK
+npm run android:build
+
+# Just install existing APK
+npm run android:install
+
+# Check connected devices
+npm run android:devices
+
+# View WebView logs
+npm run android:logcat
+
+# Uninstall from device
+npm run android:uninstall
+```
+
+## Deployment
+
+### Web App (GitHub Pages)
+
+The web app is hosted at: **https://arttu76.github.io/bounce/**
 
 To deploy updates:
 ```bash
-# Build the project
-npm run build
-
-# Commit and push to GitHub
-git add dist/
-git commit -m "Update build"
-git push origin main
+npm run deploy
 ```
 
-## Android TV App
+This will:
+1. Build TypeScript to JavaScript
+2. Commit changes to git
+3. Push to GitHub (auto-deploys via GitHub Pages)
 
-### Why Android TV Instead of Cast Receiver?
+### Android TV App
 
-Chromecast with Google TV is fundamentally different from original Chromecast devices:
-- **Original Chromecast**: Uses Cast SDK, apps appear when casting from a sender
-- **Chromecast with Google TV**: Android TV device that can run standalone apps
+The Android app loads content from GitHub Pages, so:
+- **Code changes**: Just run `npm run deploy` - no need to rebuild APK
+- **Android wrapper changes**: Run `npm run android:deploy` to rebuild and install APK
 
-To have the app appear in the Chromecast app list (like YouTube, Pac-Man, etc.), you need an Android TV app, not a Cast receiver.
+## Android TV Setup
 
-### Building the Android APK
+### Prerequisites
 
-See [android-app/README.md](android-app/README.md) for detailed instructions.
-
-Quick summary:
 ```bash
-# Install prerequisites
+# Install Java 17
 brew install openjdk@17
+
+# Install Android tools
 brew install --cask android-commandlinetools
 brew install android-platform-tools
 
-# Set up environment
+# Set up environment (add to ~/.zshrc or ~/.bashrc)
 export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
 export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
 
 # Install SDK components
 sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-# Build APK
-cd android-app
-./gradlew assembleDebug
-
-# APK created at: app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Sideloading to Chromecast with Google TV
+### Enable Developer Mode on Chromecast
 
-1. **Enable Developer Mode on Chromecast**:
-   - Settings > System > About
-   - Click "Android TV OS build" 7 times
-   - Enable USB debugging and Wireless debugging in Developer options
+1. Settings > System > About
+2. Click "Android TV OS build" 7 times to enable Developer options
+3. Settings > System > Developer options
+4. Enable "USB debugging" and "Wireless debugging"
 
-2. **Discover Chromecast IP**:
-   ```bash
-   # Find Chromecast on network
-   dns-sd -B _googlecast._tcp local.
+### Connect via ADB
 
-   # Get IP address (example output: 172.20.10.7)
-   dns-sd -G v4 <hostname>.local.
-   ```
+```bash
+# Find Chromecast on network
+dns-sd -B _googlecast._tcp local.
 
-3. **Pair and Install**:
-   ```bash
-   # On Chromecast: Settings > Developer options > Wireless debugging > Pair device
-   # Note the pairing code and port
+# Get IP address (e.g., 172.20.10.7)
+dns-sd -G v4 <hostname>.local.
 
-   # Pair (replace code and port)
-   adb pair <IP>:<PORT> <PAIRING_CODE>
+# On Chromecast: Settings > Developer options > Wireless debugging > Pair device
+# Note the pairing code and port
 
-   # Install APK
-   adb install app/build/outputs/apk/debug/app-debug.apk
-   ```
+# Pair with Chromecast (replace IP, port, and code)
+adb pair 172.20.10.7:37759 123456
 
-4. **Launch**: Find "Bounce" in your Chromecast app list
+# Device auto-connects after pairing
+adb devices
+```
 
-## How It Works
+### Build and Install
 
-### Physics Engine
+```bash
+# Build and install in one command
+npm run android:deploy
 
-The app uses Matter.js for realistic 2D physics:
-- **Gravity**: Circles fall naturally (scale: 0.001)
-- **Collisions**: Circles bounce off each other and walls
-- **Borders**: Physics bodies account for visual borders
+# Or manually:
+npm run android:build
+npm run android:install
+```
 
-### Circle Lifecycle
+### Launch the App
 
-1. **Spawn**: New circle every 500ms (random size: 5%-15% of screen width)
-2. **Fall**: Affected by gravity, bounces when hitting ground/walls
-3. **Age**: After 6 seconds, oldest circles (8-16 at a time) begin animation
-4. **Animation**: Over 6 seconds:
-   - Size grows to 125% of initial
-   - Color fades from white to black
-   - Border animates from white to green
-5. **Explosion**: Circle explodes (or can be clicked to explode immediately)
-   - Spawns 50 green particles in circular pattern
-   - Applies outward force to nearby circles
-   - Particles fade and shrink over 6 seconds
+Find "Bounce" in your Chromecast app list!
 
-### Resolution Independence
+## Game Mechanics
 
-The app adapts to any screen size:
-- Window resize listener updates canvas and physics world
-- All calculations use current window dimensions
-- Circles, particles, and forces scale proportionally
+### Bubble Spawning
+
+- New bubbles spawn every 500ms at the top of the screen
+- Random size: 2%-5% of screen width
+- Random color: red, green, or blue
+- Bubbles fall with realistic gravity and bounce physics
+
+### Selection & Navigation
+
+- **Initial Selection**: Press any arrow key to select the middle bubble
+- **D-pad Navigation**: Arrows select nearest bubble in that direction
+- **Smart Algorithm**: Uses dot product alignment to find best match
+- **Auto-Deselect**: Selection clears after 3 seconds of inactivity
+- **Visual Indicator**: White circle around selected bubble
+
+### Popping Bubbles
+
+1. Press OK button (Enter/Space) to pop selected bubble
+2. Algorithm finds all connected same-color bubbles using flood-fill:
+   - Pre-filters bubbles by color for efficiency
+   - Checks if bubbles are touching (with 5px tolerance)
+   - Recursively finds all connected bubbles
+3. All connected bubbles explode with particle effects
+4. Nearest remaining bubble is automatically selected
+
+### Particle Effects
+
+- 33 particles spawn from each popped bubble
+- Particles inherit the bubble's color
+- Spread in circular pattern with random velocities
+- Apply outward force to nearby bubbles
+- Fade out over 6 seconds
 
 ## Configuration
 
 Key parameters in [src/app.ts](src/app.ts):
 
 ```typescript
-// Circle spawning
-const SPAWN_INTERVAL = 500; // milliseconds
-const MIN_SIZE = 0.05;       // 5% of screen width
-const MAX_SIZE = 0.15;       // 15% of screen width
+// Bubble spawning
+const SPAWN_INTERVAL = 500;     // milliseconds between spawns
+const radius = width * (0.02 + Math.random() * 0.03); // 2%-5% of width
 
-// Animation timing
-const ANIMATION_START = 6000;  // ms before animation starts
-const ANIMATION_DURATION = 6000; // ms for animation
+// Colors
+const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
+
+// Selection
+const SELECTION_TIMEOUT = 3000; // ms before auto-deselect
 
 // Explosion
-const PARTICLE_COUNT = 50;      // particles per explosion
-const EXPLOSION_FORCE = 6.0;    // force applied to nearby circles
+const PARTICLE_COUNT = 33;      // particles per bubble
 const PARTICLE_LIFETIME = 6000; // ms before particles disappear
+
+// Touch detection
+const TOUCH_TOLERANCE = 5;      // pixels
 ```
 
-## Updating the Web App
+## NPM Scripts
 
-After making changes to the source code:
+### Web Development
+- `npm run build` - Compile TypeScript and copy assets to dist/
+- `npm run watch` - Watch mode for TypeScript compilation
+- `npm run serve` - Serve dist/ locally on port 22222
+- `npm run dev` - Build and serve in one command
+- `npm run deploy` - Build and push to GitHub Pages
 
-```bash
-# 1. Build
-npm run build
+### Android Development
+- `npm run android:build` - Build debug APK
+- `npm run android:install` - Install APK to connected device
+- `npm run android:deploy` - Build and install in one command
+- `npm run android:devices` - List connected ADB devices
+- `npm run android:logcat` - View WebView debug logs
+- `npm run android:uninstall` - Remove app from device
 
-# 2. Test locally
-npm run serve
+## Technical Implementation
 
-# 3. Deploy to GitHub Pages
-git add dist/
-git commit -m "Your change description"
-git push origin main
+### Flood-Fill Algorithm
+
+The color-matching algorithm uses an optimized iterative flood-fill:
+
+```typescript
+function findConnectedCircles(startCircle: CircleData): CircleData[] {
+    // 1. Pre-filter by color (performance optimization)
+    const sameColorCircles = circles.filter(c => c.color === startCircle.color);
+
+    // 2. Iterative flood-fill with queue
+    const connected = new Set<CircleData>([startCircle]);
+    const toCheck: CircleData[] = [startCircle];
+
+    while (toCheck.length > 0) {
+        const current = toCheck.pop()!;
+
+        // 3. Find touching bubbles
+        sameColorCircles.forEach(otherCircle => {
+            if (!connected.has(otherCircle) && areTouching(current, otherCircle)) {
+                connected.add(otherCircle);
+                toCheck.push(otherCircle);
+            }
+        });
+    }
+
+    return Array.from(connected);
+}
 ```
 
-Changes are immediately reflected in the Android TV app (no need to rebuild/reinstall APK) since it loads the web app from GitHub Pages.
+### Navigation Algorithm
 
-## Development Tips
+Uses vector math for directional navigation:
 
-### Testing Locally
+```typescript
+function navigateSelection(direction: 'up' | 'down' | 'left' | 'right') {
+    // 1. Direction vector
+    const dirVector = { x: 0, y: 0 };
+    // (set based on direction)
 
-Use the sender page to test the receiver:
-1. Build and serve: `npm run build && npm run serve`
-2. Open sender page: http://localhost:22222/sender.html
-3. Load receiver in iframe for quick testing
+    // 2. Score each bubble using alignment and distance
+    const alignment = (dx * dirVector.x + dy * dirVector.y) / distance;
+    const score = distance * (2 - alignment);
 
-### Debugging
-
-- **Web app**: Use Chrome DevTools
-- **Android TV app**:
-  ```bash
-  adb logcat | grep bounce
-  ```
-
-### Hot Reload
-
-For rapid development, edit TypeScript files and rebuild:
-```bash
-# Watch mode (requires additional setup)
-tsc --watch --project tsconfig.receiver.json
+    // 3. Select bubble with best score
+}
 ```
 
-## Technical Details
+### WebView Optimization
 
-### TypeScript Configuration
+The Android app is configured for optimal performance:
 
-Two separate TypeScript configs to avoid module conflicts:
-- `tsconfig.receiver.json`: For Cast receiver app (uses global Matter.js)
-- `tsconfig.sender.json`: For sender app (uses global Cast SDK)
+```kotlin
+// No caching - always load fresh content from GitHub Pages
+settings.cacheMode = WebSettings.LOAD_NO_CACHE
+webView.clearCache(true)
+webView.clearHistory()
 
-### Android WebView Configuration
+// Only essential settings enabled
+settings.javaScriptEnabled = true
+settings.loadWithOverviewMode = true
+settings.useWideViewPort = true
 
-The Android app uses a fullscreen WebView with:
-- JavaScript enabled
-- Hardware acceleration
-- DOM storage enabled
-- Network security config for HTTPS
-
-### GitHub Pages Deployment
-
-The `dist/` directory is deployed to GitHub Pages:
-- Branch: main
-- Path: /dist
-- URL: https://arttu76.github.io/bounce/
+// Hardware acceleration for smooth animations
+webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+```
 
 ## Troubleshooting
 
-### Build Errors
+### Web App Issues
 
-**Problem**: Java version mismatch
+**Problem**: Changes not appearing after deployment
+```
+Solution: GitHub Pages may take 1-2 minutes to update
+Wait a moment and hard-refresh (Cmd+Shift+R)
+```
+
+**Problem**: TypeScript compilation errors
+```
+Solution: Clean and rebuild
+rm -rf dist/
+npm run build
+```
+
+### Android App Issues
+
+**Problem**: App shows old version
+```
+Solution: The Android app now forces no-cache mode
+Just close and reopen the app to get the latest version
+```
+
+**Problem**: Can't pair with Chromecast
+```
+Solution: Make sure wireless debugging is enabled:
+Settings > Developer options > Wireless debugging > Pair device
+Use the pairing code and port shown on screen
+```
+
+**Problem**: Build fails with Java error
 ```
 Solution: Ensure Java 17 is in PATH
 export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+java -version  # Should show Java 17
 ```
 
-**Problem**: Android SDK not found
+**Problem**: ADB device not found
 ```
-Solution: Create local.properties:
-echo "sdk.dir=/opt/homebrew/share/android-commandlinetools" > android-app/local.properties
-```
-
-### ADB Connection Issues
-
-**Problem**: Connection refused on port 5555
-```
-Solution: Use wireless debugging pairing instead:
-1. Settings > Developer options > Wireless debugging > Pair device
-2. adb pair <IP>:<PORT> <CODE>
-3. Device auto-connects, no need for adb connect
+Solution: Check device is paired and connected
+npm run android:devices
+If not listed, pair again using wireless debugging
 ```
 
-**Problem**: Can't find Chromecast IP
+### Gameplay Issues
+
+**Problem**: Navigation selects wrong bubble
 ```
-Solution: Use dns-sd:
-dns-sd -B _googlecast._tcp local.
-dns-sd -G v4 <hostname>.local.
+Solution: The algorithm prioritizes alignment with direction
+If bubbles are far apart, it may not always pick the visually "nearest" one
+This is intentional to prevent diagonal jumps
 ```
 
-### Runtime Issues
-
-**Problem**: WebView shows blank screen
+**Problem**: Touching bubbles don't pop together
 ```
-Solution: Check network connection and verify URL is accessible:
-https://arttu76.github.io/bounce/index.html
-```
-
-**Problem**: Particles lag on TV
-```
-Solution: Reduce particle count in src/app.ts (currently 50)
+Solution: Bubbles must be truly touching (within 5px)
+Physics may push them slightly apart
+The algorithm accounts for 5px tolerance
 ```
 
 ## Performance Optimization
 
-For older/slower devices:
-- Reduce particle count (currently 50)
-- Increase spawn interval (currently 500ms)
-- Reduce maximum circles on screen
-- Disable particle effects entirely
+For older/slower devices, edit these values in [src/app.ts](src/app.ts):
+
+```typescript
+// Reduce particle count
+const PARTICLE_COUNT = 20; // instead of 33
+
+// Slow down spawn rate
+const SPAWN_INTERVAL = 1000; // instead of 500
+
+// Reduce maximum bubbles
+if (circles.length > 50) {
+    // Remove oldest bubble
+}
+```
+
+## Repository Structure
+
+- **`src/`** - TypeScript source code
+- **`dist/`** - Compiled JavaScript (deployed to GitHub Pages)
+- **`android-app/`** - Android TV wrapper app
+- **`.claude/`** - Claude Code settings for automated permissions
+- **`.github/`** - GitHub Pages workflow configuration
+
+## No Sensitive Data
+
+This repository contains no sensitive data:
+- No API keys
+- No authentication tokens
+- No environment files
+- No private credentials
+- WebView loads public GitHub Pages URL only
 
 ## License
 
@@ -323,6 +423,7 @@ This is a personal project. Use and modify as you wish.
 
 ## Acknowledgments
 
-- Matter.js for the excellent 2D physics engine
-- Google Cast SDK for casting capabilities
-- Android TV platform for TV app support
+- **Matter.js** - Excellent 2D physics engine
+- **Google Cast SDK** - Casting capabilities
+- **Android TV** - TV app platform
+- **GitHub Pages** - Free static hosting
