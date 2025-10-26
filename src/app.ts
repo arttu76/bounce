@@ -36,7 +36,7 @@ let nextColorIndex: number = 0; // Index for cycling through colors
 const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
 let spawnInterval: number = 500; // Current spawn interval in milliseconds
 const INITIAL_SPAWN_INTERVAL = 500; // Starting spawn interval
-const SPAWN_INTERVAL_DECREASE = 0.1; // Decrease by 0.1ms each spawn (1% of original speed)
+const SPAWN_INTERVAL_DECREASE = 1; // Decrease by 1ms each spawn
 
 // Get canvas
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
