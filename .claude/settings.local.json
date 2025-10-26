@@ -4,7 +4,12 @@
       "Bash(npm run build:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(export PATH=\"/opt/homebrew/opt/openjdk@17/bin:$PATH\")",
+      "Bash(export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools)",
+      "Bash(java:*)",
+      "Bash(/opt/homebrew/bin/sdkmanager:*)"
     ],
     "deny": [],
     "ask": []

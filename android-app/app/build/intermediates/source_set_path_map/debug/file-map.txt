@@ -1,0 +1,12 @@
+com.bounce.app-leanback-1.0.0-0 /Users/arttu/.gradle/caches/transforms-3/086c3ba1ed319727c271dbca565b73e6/transformed/leanback-1.0.0/res
+com.bounce.app-core-1.0.0-1 /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/res
+com.bounce.app-coordinatorlayout-1.0.0-2 /Users/arttu/.gradle/caches/transforms-3/486324f57515b7bb96f1aeb18cdbc3fd/transformed/coordinatorlayout-1.0.0/res
+com.bounce.app-recyclerview-1.0.0-3 /Users/arttu/.gradle/caches/transforms-3/581f73a45897d595d8291ba309d30d81/transformed/recyclerview-1.0.0/res
+com.bounce.app-media-1.0.0-4 /Users/arttu/.gradle/caches/transforms-3/b061b439918765e0ba547505d252a934/transformed/media-1.0.0/res
+com.bounce.app-pngs-5 /Users/arttu/cc/android-app/app/build/generated/res/pngs/debug
+com.bounce.app-resValues-6 /Users/arttu/cc/android-app/app/build/generated/res/resValues/debug
+com.bounce.app-packageDebugResources-7 /Users/arttu/cc/android-app/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.bounce.app-packageDebugResources-8 /Users/arttu/cc/android-app/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.bounce.app-merged_res-9 /Users/arttu/cc/android-app/app/build/intermediates/merged_res/debug
+com.bounce.app-debug-10 /Users/arttu/cc/android-app/app/src/debug/res
+com.bounce.app-main-11 /Users/arttu/cc/android-app/app/src/main/res

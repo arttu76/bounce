@@ -1,0 +1,73 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.bounce.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:5:5-67
+11-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:6:5-79
+12-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:6:22-76
+13
+14    <uses-feature
+14-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:8:5-10:36
+15        android:name="android.hardware.touchscreen"
+15-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:9:9-52
+16        android:required="false" />
+16-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:10:9-33
+17    <uses-feature
+17-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:11:5-13:35
+18        android:name="android.software.leanback"
+18-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:12:9-49
+19        android:required="true" />
+19-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:13:9-32
+20
+21    <application
+21-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:15:5-34:19
+22        android:allowBackup="true"
+22-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:16:9-35
+23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+23-->[androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:22:18-86
+24        android:debuggable="true"
+25        android:extractNativeLibs="true"
+26        android:hardwareAccelerated="true"
+26-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:20:9-43
+27        android:icon="@drawable/ic_launcher"
+27-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:17:9-45
+28        android:label="Bounce"
+28-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:18:9-31
+29        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+29-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:19:9-67
+30        <activity
+30-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:22:9-33:20
+31            android:name="com.bounce.app.MainActivity"
+31-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:23:13-41
+32            android:configChanges="orientation|keyboardHidden|screenSize"
+32-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:26:13-74
+33            android:exported="true"
+33-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:24:13-36
+34            android:screenOrientation="landscape" >
+34-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:25:13-50
+35            <intent-filter>
+35-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:28:13-32:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:29:17-69
+36-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:29:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:30:17-77
+38-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:30:27-74
+39                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+39-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:31:17-86
+39-->/Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:31:27-83
+40            </intent-filter>
+41        </activity>
+42    </application>
+43
+44</manifest>

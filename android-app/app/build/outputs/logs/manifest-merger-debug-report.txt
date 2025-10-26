@@ -1,0 +1,166 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:2:1-35:12
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:2:1-35:12
+MERGED from [androidx.leanback:leanback:1.0.0] /Users/arttu/.gradle/caches/transforms-3/086c3ba1ed319727c271dbca565b73e6/transformed/leanback-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.fragment:fragment:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4c12002403644c6758f1367f71b76fce/transformed/fragment-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/581f73a45897d595d8291ba309d30d81/transformed/recyclerview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e58358d3ff18213fcea835eb7c92c1cc/transformed/legacy-support-core-ui-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.media:media:1.0.0] /Users/arttu/.gradle/caches/transforms-3/b061b439918765e0ba547505d252a934/transformed/media-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/arttu/.gradle/caches/transforms-3/f2911293b67e1404785107fbe3b5adf3/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/cc556f3c005ccadb4d0de07d81ebeea6/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/486324f57515b7bb96f1aeb18cdbc3fd/transformed/coordinatorlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/833ae74b58e276f0523dbaf26398f93d/transformed/drawerlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e68ce040110411fef82812b390f09e2d/transformed/slidingpanelayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/a46a7c0c9b5e86b904dba0e82675539e/transformed/customview-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/821bbb73818c5a829de1e9857ba6f287/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ae4c884efc08f1d3ecec6b39b5f31b4/transformed/asynclayoutinflater-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] /Users/arttu/.gradle/caches/transforms-3/095e2c5a6196f9898c626095c750c756/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/arttu/.gradle/caches/transforms-3/aaae6c85e177079460d0a60b18272c7b/transformed/versionedparcelable-1.0.0/AndroidManifest.xml:17:1-25:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/0e76c4693025f7a51e5d9870385f83a3/transformed/lifecycle-runtime-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/arttu/.gradle/caches/transforms-3/979b40bb6d178112aff734071baf7fef/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/arttu/.gradle/caches/transforms-3/df8402345a7ebcbf5e87254a18ad310d/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] /Users/arttu/.gradle/caches/transforms-3/c315858425c3d725d6a4678c05a51a87/transformed/lifecycle-viewmodel-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/arttu/.gradle/caches/transforms-3/779c00936b8c933b278d7cfc26544a3d/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/arttu/.gradle/caches/transforms-3/b2a2f9fdeab6ce2de0b611781ebb2344/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/729ff906d95f107217272b0f7db2384b/transformed/core-runtime-2.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ef3682d95f461fb29e2a229fa219945/transformed/documentfile-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/eca620b8436ec072c2318d32ef14ee82/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4a4652f6afd08fd83d14d79da4af52b6/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
+	package
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:3:5-29
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:5:5-67
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:5:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:6:5-79
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:6:22-76
+uses-feature#android.hardware.touchscreen
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:8:5-10:36
+	android:required
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:10:9-33
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:9:9-52
+uses-feature#android.software.leanback
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:11:5-13:35
+	android:required
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:13:9-32
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:12:9-49
+application
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:15:5-34:19
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:15:5-34:19
+MERGED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:22:5-89
+MERGED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:22:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/arttu/.gradle/caches/transforms-3/aaae6c85e177079460d0a60b18272c7b/transformed/versionedparcelable-1.0.0/AndroidManifest.xml:22:5-23:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/arttu/.gradle/caches/transforms-3/aaae6c85e177079460d0a60b18272c7b/transformed/versionedparcelable-1.0.0/AndroidManifest.xml:22:5-23:19
+	android:extractNativeLibs
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:22:18-86
+	android:label
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:18:9-31
+	android:hardwareAccelerated
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:20:9-43
+	android:icon
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:17:9-45
+	android:allowBackup
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:16:9-35
+	android:theme
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:19:9-67
+activity#com.bounce.app.MainActivity
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:22:9-33:20
+	android:screenOrientation
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:25:13-50
+	android:exported
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:24:13-36
+	android:configChanges
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:26:13-74
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:23:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER+category:name:android.intent.category.LEANBACK_LAUNCHER
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:28:13-32:29
+action#android.intent.action.MAIN
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:29:17-69
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:29:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:30:17-77
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:30:27-74
+category#android.intent.category.LEANBACK_LAUNCHER
+ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:31:17-86
+	android:name
+		ADDED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml:31:27-83
+uses-sdk
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+MERGED from [androidx.leanback:leanback:1.0.0] /Users/arttu/.gradle/caches/transforms-3/086c3ba1ed319727c271dbca565b73e6/transformed/leanback-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.leanback:leanback:1.0.0] /Users/arttu/.gradle/caches/transforms-3/086c3ba1ed319727c271dbca565b73e6/transformed/leanback-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4c12002403644c6758f1367f71b76fce/transformed/fragment-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4c12002403644c6758f1367f71b76fce/transformed/fragment-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/581f73a45897d595d8291ba309d30d81/transformed/recyclerview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/581f73a45897d595d8291ba309d30d81/transformed/recyclerview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e58358d3ff18213fcea835eb7c92c1cc/transformed/legacy-support-core-ui-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e58358d3ff18213fcea835eb7c92c1cc/transformed/legacy-support-core-ui-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.media:media:1.0.0] /Users/arttu/.gradle/caches/transforms-3/b061b439918765e0ba547505d252a934/transformed/media-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.media:media:1.0.0] /Users/arttu/.gradle/caches/transforms-3/b061b439918765e0ba547505d252a934/transformed/media-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/arttu/.gradle/caches/transforms-3/f2911293b67e1404785107fbe3b5adf3/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/arttu/.gradle/caches/transforms-3/f2911293b67e1404785107fbe3b5adf3/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/cc556f3c005ccadb4d0de07d81ebeea6/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/cc556f3c005ccadb4d0de07d81ebeea6/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/486324f57515b7bb96f1aeb18cdbc3fd/transformed/coordinatorlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/486324f57515b7bb96f1aeb18cdbc3fd/transformed/coordinatorlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/833ae74b58e276f0523dbaf26398f93d/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/833ae74b58e276f0523dbaf26398f93d/transformed/drawerlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e68ce040110411fef82812b390f09e2d/transformed/slidingpanelayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/e68ce040110411fef82812b390f09e2d/transformed/slidingpanelayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/a46a7c0c9b5e86b904dba0e82675539e/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] /Users/arttu/.gradle/caches/transforms-3/a46a7c0c9b5e86b904dba0e82675539e/transformed/customview-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/821bbb73818c5a829de1e9857ba6f287/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/arttu/.gradle/caches/transforms-3/821bbb73818c5a829de1e9857ba6f287/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ae4c884efc08f1d3ecec6b39b5f31b4/transformed/asynclayoutinflater-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ae4c884efc08f1d3ecec6b39b5f31b4/transformed/asynclayoutinflater-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/arttu/.gradle/caches/transforms-3/095e2c5a6196f9898c626095c750c756/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] /Users/arttu/.gradle/caches/transforms-3/095e2c5a6196f9898c626095c750c756/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.0.0] /Users/arttu/.gradle/caches/transforms-3/484f752772d716d9b4ca9ef8a33427c0/transformed/core-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/arttu/.gradle/caches/transforms-3/aaae6c85e177079460d0a60b18272c7b/transformed/versionedparcelable-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/arttu/.gradle/caches/transforms-3/aaae6c85e177079460d0a60b18272c7b/transformed/versionedparcelable-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/0e76c4693025f7a51e5d9870385f83a3/transformed/lifecycle-runtime-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/0e76c4693025f7a51e5d9870385f83a3/transformed/lifecycle-runtime-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/arttu/.gradle/caches/transforms-3/979b40bb6d178112aff734071baf7fef/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/arttu/.gradle/caches/transforms-3/979b40bb6d178112aff734071baf7fef/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/arttu/.gradle/caches/transforms-3/df8402345a7ebcbf5e87254a18ad310d/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /Users/arttu/.gradle/caches/transforms-3/df8402345a7ebcbf5e87254a18ad310d/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] /Users/arttu/.gradle/caches/transforms-3/c315858425c3d725d6a4678c05a51a87/transformed/lifecycle-viewmodel-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] /Users/arttu/.gradle/caches/transforms-3/c315858425c3d725d6a4678c05a51a87/transformed/lifecycle-viewmodel-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/arttu/.gradle/caches/transforms-3/779c00936b8c933b278d7cfc26544a3d/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/arttu/.gradle/caches/transforms-3/779c00936b8c933b278d7cfc26544a3d/transformed/lifecycle-livedata-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/arttu/.gradle/caches/transforms-3/b2a2f9fdeab6ce2de0b611781ebb2344/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/arttu/.gradle/caches/transforms-3/b2a2f9fdeab6ce2de0b611781ebb2344/transformed/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/729ff906d95f107217272b0f7db2384b/transformed/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/arttu/.gradle/caches/transforms-3/729ff906d95f107217272b0f7db2384b/transformed/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ef3682d95f461fb29e2a229fa219945/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/arttu/.gradle/caches/transforms-3/0ef3682d95f461fb29e2a229fa219945/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/eca620b8436ec072c2318d32ef14ee82/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/arttu/.gradle/caches/transforms-3/eca620b8436ec072c2318d32ef14ee82/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4a4652f6afd08fd83d14d79da4af52b6/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] /Users/arttu/.gradle/caches/transforms-3/4a4652f6afd08fd83d14d79da4af52b6/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/arttu/cc/android-app/app/src/main/AndroidManifest.xml

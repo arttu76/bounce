@@ -1,6 +1,9 @@
 "use strict";
 const circles = [];
 const particles = [];
+let selectedCircleIndex = -1; // Index of currently selected circle
+let lastInputTime = 0; // Timestamp of last input
+const SELECTION_TIMEOUT = 3000; // Deselect after 3 seconds of no input
 // Initialize the Cast Receiver SDK
 // @ts-ignore - Types loaded from CDN
 const context = cast.framework.CastReceiverContext.getInstance();
@@ -109,9 +112,9 @@ function explodeCircle(circleData) {
     const explosionCenter = circleData.body.position;
     const explosionRadius = circleData.currentRadius * 10;
     const explosionForce = 6.0;
-    // Spawn 100 green particles
-    for (let i = 0; i < 100; i++) {
-        const angle = (Math.PI * 2 * i) / 100;
+    // Spawn 33 green particles
+    for (let i = 0; i < 33; i++) {
+        const angle = (Math.PI * 2 * i) / 33;
         const speed = (5 + Math.random() * 10) / 3;
         const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
         const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
@@ -158,6 +161,99 @@ function explodeCircle(circleData) {
     const index = circles.indexOf(circleData);
     if (index > -1) {
         circles.splice(index, 1);
+        // If this was the selected circle, deselect
+        if (selectedCircleIndex === index) {
+            selectedCircleIndex = -1;
+        }
+        else if (selectedCircleIndex > index) {
+            // Adjust selected index if needed
+            selectedCircleIndex--;
+        }
+    }
+}
+// Select the middle circle
+function selectMiddleCircle() {
+    if (circles.length === 0) {
+        selectedCircleIndex = -1;
+        return;
+    }
+    // Find circle closest to center of screen
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    let closestIndex = 0;
+    let closestDistance = Number.MAX_VALUE;
+    circles.forEach((circle, index) => {
+        const dx = circle.body.position.x - centerX;
+        const dy = circle.body.position.y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+        }
+    });
+    selectedCircleIndex = closestIndex;
+    lastInputTime = Date.now();
+}
+// Navigate to nearest circle in specified direction
+function navigateSelection(direction) {
+    if (circles.length === 0)
+        return;
+    // If no circle selected, select middle one
+    if (selectedCircleIndex === -1) {
+        selectMiddleCircle();
+        return;
+    }
+    const currentCircle = circles[selectedCircleIndex];
+    if (!currentCircle) {
+        selectMiddleCircle();
+        return;
+    }
+    const currentPos = currentCircle.body.position;
+    let bestIndex = -1;
+    let bestDistance = Number.MAX_VALUE;
+    circles.forEach((circle, index) => {
+        if (index === selectedCircleIndex)
+            return;
+        const pos = circle.body.position;
+        const dx = pos.x - currentPos.x;
+        const dy = pos.y - currentPos.y;
+        // Check if circle is in the correct direction
+        let isValidDirection = false;
+        let directionalDistance = 0;
+        switch (direction) {
+            case 'up':
+                if (dy < -10) { // Must be significantly above
+                    isValidDirection = true;
+                    directionalDistance = Math.abs(dy) + Math.abs(dx) * 0.5; // Prefer vertical alignment
+                }
+                break;
+            case 'down':
+                if (dy > 10) { // Must be significantly below
+                    isValidDirection = true;
+                    directionalDistance = Math.abs(dy) + Math.abs(dx) * 0.5;
+                }
+                break;
+            case 'left':
+                if (dx < -10) { // Must be significantly to the left
+                    isValidDirection = true;
+                    directionalDistance = Math.abs(dx) + Math.abs(dy) * 0.5; // Prefer horizontal alignment
+                }
+                break;
+            case 'right':
+                if (dx > 10) { // Must be significantly to the right
+                    isValidDirection = true;
+                    directionalDistance = Math.abs(dx) + Math.abs(dy) * 0.5;
+                }
+                break;
+        }
+        if (isValidDirection && directionalDistance < bestDistance) {
+            bestDistance = directionalDistance;
+            bestIndex = index;
+        }
+    });
+    if (bestIndex !== -1) {
+        selectedCircleIndex = bestIndex;
+        lastInputTime = Date.now();
     }
 }
 // Handle mouse/touch clicks on circles
@@ -176,6 +272,42 @@ canvas.addEventListener('click', (event) => {
             explodeCircle(circleData);
             break; // Only explode one circle per click
         }
+    }
+});
+// Handle keyboard/remote control input
+window.addEventListener('keydown', (event) => {
+    switch (event.key) {
+        case 'ArrowUp':
+            event.preventDefault();
+            navigateSelection('up');
+            break;
+        case 'ArrowDown':
+            event.preventDefault();
+            navigateSelection('down');
+            break;
+        case 'ArrowLeft':
+            event.preventDefault();
+            navigateSelection('left');
+            break;
+        case 'ArrowRight':
+            event.preventDefault();
+            navigateSelection('right');
+            break;
+        case 'Enter': // OK button
+            event.preventDefault();
+            if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
+                explodeCircle(circles[selectedCircleIndex]);
+            }
+            break;
+        case ' ': // Space bar (alternative)
+            event.preventDefault();
+            if (selectedCircleIndex === -1) {
+                selectMiddleCircle();
+            }
+            else if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
+                explodeCircle(circles[selectedCircleIndex]);
+            }
+            break;
     }
 });
 // Initialize
@@ -198,6 +330,14 @@ function lerpColor(color1, color2, t) {
 function updateAnimations() {
     const now = Date.now();
     const toRemove = [];
+    // Check for selection timeout
+    if (selectedCircleIndex !== -1 && (now - lastInputTime) > SELECTION_TIMEOUT) {
+        selectedCircleIndex = -1;
+    }
+    // Validate selected index
+    if (selectedCircleIndex >= circles.length) {
+        selectedCircleIndex = -1;
+    }
     circles.forEach(circleData => {
         if (circleData.animationStartTime) {
             const elapsed = now - circleData.animationStartTime;
@@ -252,6 +392,18 @@ function updateAnimations() {
             particles.splice(index, 1);
         }
     });
+    // Draw selection indicator
+    if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
+        const selectedCircle = circles[selectedCircleIndex];
+        const ctx = render.context;
+        const pos = selectedCircle.body.position;
+        const selectionRadius = selectedCircle.currentRadius + 15; // Offset from circle edge
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, selectionRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ff0000'; // Red
+        ctx.lineWidth = 5;
+        ctx.stroke();
+    }
     requestAnimationFrame(updateAnimations);
 }
 // Start animation loop
