@@ -1,0 +1,15 @@
+# Installation
+> `npm install --save @types/chromecast-caf-sender`
+
+# Summary
+This package contains type definitions for chromecast-caf-sender (https://developers.google.com/cast/docs/caf_receiver_overview).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/chromecast-caf-sender.
+
+### Additional Details
+ * Last updated: Sat, 23 Nov 2024 06:02:49 GMT
+ * Dependencies: [@types/chrome](https://npmjs.com/package/@types/chrome)
+
+# Credits
+These definitions were written by [Joey Parrish](https://github.com/joeyparrish), [Julian Domingo](https://github.com/juliandomingo), [Theodore Abshire](https://github.com/theodab), and [Samuel Maddock](https://github.com/samuelmaddock).

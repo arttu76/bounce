@@ -1,0 +1,44 @@
+{
+    "name": "@types/chromecast-caf-sender",
+    "version": "1.0.11",
+    "description": "TypeScript definitions for chromecast-caf-sender",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/chromecast-caf-sender",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Joey Parrish",
+            "githubUsername": "joeyparrish",
+            "url": "https://github.com/joeyparrish"
+        },
+        {
+            "name": "Julian Domingo",
+            "githubUsername": "juliandomingo",
+            "url": "https://github.com/juliandomingo"
+        },
+        {
+            "name": "Theodore Abshire",
+            "githubUsername": "theodab",
+            "url": "https://github.com/theodab"
+        },
+        {
+            "name": "Samuel Maddock",
+            "githubUsername": "samuelmaddock",
+            "url": "https://github.com/samuelmaddock"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/chromecast-caf-sender"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/chrome": "*"
+    },
+    "peerDependencies": {},
+    "typesPublisherContentHash": "afe578e1758c24796dfda2a00846ebcc670f59895f14719205a9851de52d1da8",
+    "typeScriptVersion": "4.9",
+    "nonNpm": true
+}
