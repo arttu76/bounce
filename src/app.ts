@@ -101,33 +101,37 @@ function addCircle() {
     const width = canvas.width;
 
     // Random size between 2% and 5% of screen width
-    const radius = width * (0.02 + Math.random() * 0.03);
+    const visualRadius = width * (0.02 + Math.random() * 0.03);
+    const borderWidth = 2;
+
+    // Physics body should include the border
+    const physicsRadius = visualRadius + borderWidth / 2;
 
     // Random x position
-    const x = radius + Math.random() * (width - radius * 2);
+    const x = physicsRadius + Math.random() * (width - physicsRadius * 2);
 
     // Start above the screen
-    const y = -radius;
+    const y = -physicsRadius;
 
     // Create circle body with white fill and white outline
-    const circle = Bodies.circle(x, y, radius, {
+    const circle = Bodies.circle(x, y, physicsRadius, {
         restitution: 0.6,
         friction: 0.1,
         render: {
             fillStyle: '#ffffff',
             strokeStyle: '#ffffff',
-            lineWidth: 2
+            lineWidth: borderWidth
         }
     });
 
     World.add(engine.world, circle);
 
-    // Track this circle
+    // Track this circle (store visual radius for consistent sizing)
     circles.push({
         body: circle,
         createdAt: Date.now(),
-        initialRadius: radius,
-        currentRadius: radius
+        initialRadius: visualRadius,
+        currentRadius: visualRadius
     });
 }
 
