@@ -111,8 +111,8 @@ function addCircle() {
     const visualRadius = width * (0.02 + Math.random() * 0.03);
     const borderWidth = 6; // 3x wider (was 2)
 
-    // Physics body should include the border
-    const physicsRadius = visualRadius + borderWidth / 2;
+    // Physics body should include the full border (drawn outside the radius)
+    const physicsRadius = visualRadius + borderWidth;
 
     // Random x position
     const x = physicsRadius + Math.random() * (width - physicsRadius * 2);
