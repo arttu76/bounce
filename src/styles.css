@@ -10,7 +10,6 @@ body {
     background-color: black;
     overflow: hidden;
     position: relative;
-    transition: background-color 0.5s ease-out;
 }
 
 #canvas {
