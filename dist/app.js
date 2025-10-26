@@ -142,8 +142,30 @@ function updateAnimations() {
             }
         }
     });
-    // Remove completed animations
+    // Remove completed animations with explosion effect
     toRemove.forEach(circleData => {
+        const explosionCenter = circleData.body.position;
+        const explosionRadius = circleData.currentRadius * 5; // Affect circles within 5x radius
+        const explosionForce = 0.05; // Base force strength
+        // Apply outward velocity to nearby circles
+        circles.forEach(otherCircle => {
+            if (otherCircle !== circleData && !otherCircle.animationStartTime) {
+                const dx = otherCircle.body.position.x - explosionCenter.x;
+                const dy = otherCircle.body.position.y - explosionCenter.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < explosionRadius && distance > 0) {
+                    // Force falls off with distance
+                    const forceMagnitude = explosionForce * (1 - distance / explosionRadius);
+                    // Normalize direction and apply force
+                    const forceX = (dx / distance) * forceMagnitude;
+                    const forceY = (dy / distance) * forceMagnitude;
+                    Body.setVelocity(otherCircle.body, {
+                        x: otherCircle.body.velocity.x + forceX,
+                        y: otherCircle.body.velocity.y + forceY
+                    });
+                }
+            }
+        });
         World.remove(engine.world, circleData.body);
         const index = circles.indexOf(circleData);
         if (index > -1) {
