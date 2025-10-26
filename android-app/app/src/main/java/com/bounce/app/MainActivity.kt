@@ -24,18 +24,18 @@ class MainActivity : Activity() {
 
         webView = findViewById(R.id.webview)
 
+        // Clear all caches to ensure fresh content
+        webView.clearCache(true)
+        webView.clearHistory()
+
         // Configure WebView settings
         val settings: WebSettings = webView.settings
         settings.javaScriptEnabled = true
-        settings.domStorageEnabled = true
-        settings.databaseEnabled = true
-        settings.allowFileAccess = true
-        settings.allowContentAccess = true
         settings.loadWithOverviewMode = true
         settings.useWideViewPort = true
         settings.builtInZoomControls = false
         settings.displayZoomControls = false
-        settings.cacheMode = WebSettings.LOAD_DEFAULT
+        settings.cacheMode = WebSettings.LOAD_NO_CACHE
 
         // Enable hardware acceleration
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
