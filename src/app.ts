@@ -12,7 +12,13 @@ interface CircleData {
     animationStartTime?: number;
 }
 
+interface Particle {
+    body: MatterBody;
+    createdAt: number;
+}
+
 const circles: CircleData[] = [];
+const particles: Particle[] = [];
 
 // Initialize the Cast Receiver SDK
 // @ts-ignore - Types loaded from CDN
@@ -197,7 +203,39 @@ function updateAnimations() {
     toRemove.forEach(circleData => {
         const explosionCenter = circleData.body.position;
         const explosionRadius = circleData.currentRadius * 10; // Affect circles within 10x radius
-        const explosionForce = 6.0; // Base force strength
+        const explosionForce = 12.0; // Base force strength (2x original)
+
+        // Spawn 100 green particles
+        for (let i = 0; i < 100; i++) {
+            const angle = (Math.PI * 2 * i) / 100; // Evenly distributed around circle
+            const speed = 3 + Math.random() * 5; // Random speed between 3-8
+
+            // Start particles at the circle's edge
+            const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
+            const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
+
+            const particle = Bodies.circle(startX, startY, 2, {
+                restitution: 0.6,
+                friction: 0.01,
+                render: {
+                    fillStyle: '#00ff00',
+                    strokeStyle: '#00ff00',
+                    lineWidth: 0
+                }
+            });
+
+            // Set initial velocity outward
+            Body.setVelocity(particle, {
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
+            });
+
+            World.add(engine.world, particle);
+            particles.push({
+                body: particle,
+                createdAt: Date.now()
+            });
+        }
 
         // Apply outward velocity to nearby circles
         circles.forEach(otherCircle => {
@@ -226,6 +264,30 @@ function updateAnimations() {
         const index = circles.indexOf(circleData);
         if (index > -1) {
             circles.splice(index, 1);
+        }
+    });
+
+    // Update particle colors and remove old ones
+    const particlesToRemove: Particle[] = [];
+    particles.forEach(particle => {
+        const age = now - particle.createdAt;
+        const lifeProgress = age / 5000; // 5 second lifetime
+
+        if (lifeProgress >= 1) {
+            particlesToRemove.push(particle);
+        } else {
+            // Fade from green to black
+            const color = lerpColor('#00ff00', '#000000', lifeProgress);
+            particle.body.render.fillStyle = color;
+            particle.body.render.strokeStyle = color;
+        }
+    });
+
+    particlesToRemove.forEach(particle => {
+        World.remove(engine.world, particle.body);
+        const index = particles.indexOf(particle);
+        if (index > -1) {
+            particles.splice(index, 1);
         }
     });
 
