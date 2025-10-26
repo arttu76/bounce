@@ -22,8 +22,6 @@ interface Particle {
 const circles: CircleData[] = [];
 const particles: Particle[] = [];
 let selectedCircleIndex: number = -1; // Index of currently selected circle
-let lastInputTime: number = 0; // Timestamp of last input
-const SELECTION_TIMEOUT = 3000; // Deselect after 3 seconds of no input
 
 // Game state
 let longestChain: number = 0; // Longest chain of bubbles removed in one click
@@ -36,7 +34,7 @@ let nextColorIndex: number = 0; // Index for cycling through colors
 const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
 let spawnInterval: number = 500; // Current spawn interval in milliseconds
 const INITIAL_SPAWN_INTERVAL = 500; // Starting spawn interval
-const SPAWN_INTERVAL_DECREASE = 5; // Decrease by 5ms each spawn
+const SPAWN_INTERVAL_DECREASE = 2; // Decrease by 2ms each spawn
 
 // Get canvas
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -286,7 +284,6 @@ function selectNearestCircleToPosition(x: number, y: number) {
     });
 
     selectedCircleIndex = closestIndex;
-    lastInputTime = Date.now();
 }
 
 // Select the middle circle
@@ -383,7 +380,6 @@ function navigateSelection(direction: 'up' | 'down' | 'left' | 'right') {
 
     if (bestIndex !== -1) {
         selectedCircleIndex = bestIndex;
-        lastInputTime = Date.now();
     }
 }
 
@@ -489,7 +485,7 @@ function restartGame() {
     // Reset game state
     isGameOver = false;
     selectedCircleIndex = -1;
-    longestChain = 0;
+    // Don't reset longestChain - keep it as high score
 
     // Reset spawning state
     spawnInterval = INITIAL_SPAWN_INTERVAL;
@@ -527,6 +523,23 @@ function drawGameOver(progress: number) {
     // Progress bar
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+
+    // Draw longest chain in top right corner (same as during game)
+    ctx.textAlign = 'center';
+    const centerX = canvas.width - 100;
+
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = 'top';
+    ctx.fillText('LONGEST', centerX, 20);
+
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('CHAIN', centerX, 60);
+
+    ctx.font = 'bold 96px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`${longestChain}`, centerX, 100);
 
     ctx.restore();
 }
@@ -575,11 +588,6 @@ function updateAnimations() {
         if (medianY <= dangerLineY) {
             triggerGameOver();
         }
-    }
-
-    // Check for selection timeout
-    if (selectedCircleIndex !== -1 && (now - lastInputTime) > SELECTION_TIMEOUT) {
-        selectedCircleIndex = -1;
     }
 
     // Validate selected index
@@ -647,10 +655,10 @@ function updateAnimations() {
     ctx.textBaseline = 'top';
     ctx.fillText('LONGEST', centerX, 20);
 
-    // Draw "CHAIN:"
+    // Draw "CHAIN"
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN:', centerX, 60);
+    ctx.fillText('CHAIN', centerX, 60);
 
     // Draw chain number in BIG letters
     ctx.font = 'bold 96px Arial';
