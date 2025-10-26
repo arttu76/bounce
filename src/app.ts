@@ -27,7 +27,7 @@ let selectedCircleIndex: number = -1; // Index of currently selected circle
 let longestChain: number = 0; // Longest chain of bubbles removed in one click
 let isGameOver: boolean = false; // Game over state
 let gameOverStartTime: number = 0; // When game over started
-const GAME_OVER_DURATION = 5000; // 5 seconds
+const GAME_OVER_CLICK_DELAY = 2000; // Wait 2 seconds before accepting clicks to restart
 
 // Spawning state
 let nextColorIndex: number = 0; // Index for cycling through colors
@@ -385,6 +385,15 @@ function navigateSelection(direction: 'up' | 'down' | 'left' | 'right') {
 
 // Handle mouse/touch clicks on circles
 canvas.addEventListener('click', (event) => {
+    // Check if game over - restart if enough time has passed
+    if (isGameOver) {
+        const timeSinceGameOver = Date.now() - gameOverStartTime;
+        if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+            restartGame();
+        }
+        return;
+    }
+
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -406,6 +415,16 @@ canvas.addEventListener('click', (event) => {
 
 // Handle keyboard/remote control input
 window.addEventListener('keydown', (event) => {
+    // Check if game over - restart on any key if enough time has passed
+    if (isGameOver) {
+        const timeSinceGameOver = Date.now() - gameOverStartTime;
+        if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+            event.preventDefault();
+            restartGame();
+        }
+        return;
+    }
+
     switch (event.key) {
         case 'ArrowUp':
             event.preventDefault();
@@ -495,7 +514,7 @@ function restartGame() {
 }
 
 // Draw game over screen
-function drawGameOver(progress: number) {
+function drawGameOver() {
     const ctx = render.context;
     ctx.save();
 
@@ -510,19 +529,13 @@ function drawGameOver(progress: number) {
     ctx.textBaseline = 'middle';
     ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
 
-    // Draw progress bar below
-    const barWidth = 400;
-    const barHeight = 30;
-    const barX = (canvas.width - barWidth) / 2;
-    const barY = canvas.height / 2 + 50;
-
-    // Background bar
-    ctx.fillStyle = '#333333';
-    ctx.fillRect(barX, barY, barWidth, barHeight);
-
-    // Progress bar
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+    // Draw "Click to restart" message
+    const timeSinceGameOver = Date.now() - gameOverStartTime;
+    if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+        ctx.font = 'bold 32px Arial';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('Click to restart', canvas.width / 2, canvas.height / 2 + 50);
+    }
 
     // Draw longest chain in top right corner (same as during game)
     ctx.textAlign = 'center';
@@ -549,15 +562,10 @@ function updateAnimations() {
     const now = Date.now();
     const toRemove: CircleData[] = [];
 
-    // Check for game over countdown
+    // Check for game over
     if (isGameOver) {
-        const gameOverProgress = (now - gameOverStartTime) / GAME_OVER_DURATION;
-        if (gameOverProgress >= 1) {
-            // Restart game
-            restartGame();
-        }
         // Skip rest of updates during game over
-        drawGameOver(gameOverProgress);
+        drawGameOver();
         requestAnimationFrame(updateAnimations);
         return;
     }
