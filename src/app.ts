@@ -192,8 +192,8 @@ function updateAnimations() {
     // Remove completed animations with explosion effect
     toRemove.forEach(circleData => {
         const explosionCenter = circleData.body.position;
-        const explosionRadius = circleData.currentRadius * 5; // Affect circles within 5x radius
-        const explosionForce = 0.05; // Base force strength
+        const explosionRadius = circleData.currentRadius * 10; // Affect circles within 10x radius
+        const explosionForce = 2.0; // Base force strength
 
         // Apply outward velocity to nearby circles
         circles.forEach(otherCircle => {
@@ -252,6 +252,11 @@ setInterval(() => {
         }
     }
 }, 6000);
+
+// Spawn initial 50 circles
+for (let i = 0; i < 50; i++) {
+    addCircle();
+}
 
 // Add circles periodically
 setInterval(() => {
