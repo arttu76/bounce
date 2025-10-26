@@ -10,6 +10,7 @@ interface CircleData {
     initialRadius: number;
     currentRadius: number;
     color: string; // '#ff0000', '#00ff00', or '#0000ff'
+    hasTouchedOther: boolean; // Whether this bubble has ever touched another bubble
 }
 
 interface Particle {
@@ -23,6 +24,19 @@ const particles: Particle[] = [];
 let selectedCircleIndex: number = -1; // Index of currently selected circle
 let lastInputTime: number = 0; // Timestamp of last input
 const SELECTION_TIMEOUT = 3000; // Deselect after 3 seconds of no input
+
+// Game state
+let longestChain: number = 0; // Longest chain of bubbles removed in one click
+let isGameOver: boolean = false; // Game over state
+let gameOverStartTime: number = 0; // When game over started
+const GAME_OVER_DURATION = 5000; // 5 seconds
+
+// Spawning state
+let nextColorIndex: number = 0; // Index for cycling through colors
+const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
+let spawnInterval: number = 500; // Current spawn interval in milliseconds
+const INITIAL_SPAWN_INTERVAL = 500; // Starting spawn interval
+const SPAWN_INTERVAL_DECREASE = 10; // Decrease by 10ms each spawn
 
 // Initialize the Cast Receiver SDK
 // @ts-ignore - Types loaded from CDN
@@ -119,9 +133,9 @@ function addCircle() {
     // Start above the screen
     const y = -radius;
 
-    // Random color: red, green, or blue
-    const colors = ['#ff0000', '#00ff00', '#0000ff'];
-    const color = colors[Math.floor(Math.random() * colors.length)];
+    // Sequential color: red, green, blue, red, green, blue...
+    const color = colors[nextColorIndex];
+    nextColorIndex = (nextColorIndex + 1) % colors.length;
 
     // Create circle body with random color (no border)
     const circle = Bodies.circle(x, y, radius, {
@@ -140,7 +154,8 @@ function addCircle() {
         createdAt: Date.now(),
         initialRadius: radius,
         currentRadius: radius,
-        color: color
+        color: color,
+        hasTouchedOther: false
     });
 }
 
@@ -196,6 +211,11 @@ function removeConnectedCircles(clickedCircle: CircleData) {
     };
 
     const toRemove = findConnectedCircles(clickedCircle);
+
+    // Update longest chain
+    if (toRemove.length > longestChain) {
+        longestChain = toRemove.length;
+    }
 
     // Remove all connected circles
     toRemove.forEach(circleData => {
@@ -454,10 +474,112 @@ function lerpColor(color1: string, color2: string, t: number): string {
     return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
+// Trigger game over
+function triggerGameOver() {
+    if (isGameOver) return; // Already in game over state
+    isGameOver = true;
+    gameOverStartTime = Date.now();
+}
+
+// Restart the game
+function restartGame() {
+    // Remove all circles
+    circles.forEach(circle => {
+        World.remove(engine.world, circle.body);
+    });
+    circles.length = 0;
+
+    // Remove all particles
+    particles.forEach(particle => {
+        World.remove(engine.world, particle.body);
+    });
+    particles.length = 0;
+
+    // Reset game state
+    isGameOver = false;
+    selectedCircleIndex = -1;
+    longestChain = 0;
+
+    // Reset spawning state
+    spawnInterval = INITIAL_SPAWN_INTERVAL;
+    nextColorIndex = 0;
+
+    // Don't spawn initial circles - let them accumulate naturally from the interval
+}
+
+// Draw game over screen
+function drawGameOver(progress: number) {
+    const ctx = render.context;
+    ctx.save();
+
+    // Semi-transparent overlay
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw "GAME OVER" in center
+    ctx.font = 'bold 96px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+
+    // Draw progress bar below
+    const barWidth = 400;
+    const barHeight = 30;
+    const barX = (canvas.width - barWidth) / 2;
+    const barY = canvas.height / 2 + 50;
+
+    // Background bar
+    ctx.fillStyle = '#333333';
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Progress bar
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+
+    ctx.restore();
+}
+
 // Update animations
 function updateAnimations() {
     const now = Date.now();
     const toRemove: CircleData[] = [];
+
+    // Check for game over countdown
+    if (isGameOver) {
+        const gameOverProgress = (now - gameOverStartTime) / GAME_OVER_DURATION;
+        if (gameOverProgress >= 1) {
+            // Restart game
+            restartGame();
+        }
+        // Skip rest of updates during game over
+        drawGameOver(gameOverProgress);
+        requestAnimationFrame(updateAnimations);
+        return;
+    }
+
+    // Update hasTouchedOther flag for all bubbles
+    circles.forEach(circle => {
+        if (!circle.hasTouchedOther) {
+            // Check if this bubble is touching any other bubble
+            const isTouchingOther = circles.some(otherCircle =>
+                otherCircle !== circle && areTouching(circle, otherCircle)
+            );
+            if (isTouchingOther) {
+                circle.hasTouchedOther = true;
+            }
+        }
+    });
+
+    // Check for game over condition: bubble that has touched another reaches top
+    circles.forEach(circle => {
+        if (circle.hasTouchedOther) {
+            const topY = circle.body.position.y - circle.currentRadius;
+            if (topY <= 0) {
+                triggerGameOver();
+            }
+        }
+    });
 
     // Check for selection timeout
     if (selectedCircleIndex !== -1 && (now - lastInputTime) > SELECTION_TIMEOUT) {
@@ -517,15 +639,51 @@ function updateAnimations() {
         ctx.stroke();
     }
 
-    // Draw bubble counter in top right corner
+    // Draw longest chain in top right corner (centered)
     const ctx = render.context;
     ctx.save();
-    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    const centerX = canvas.width - 100; // Centered in top right area
+
+    // Draw "LONGEST"
+    ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'right';
     ctx.textBaseline = 'top';
-    ctx.fillText(`${circles.length}`, canvas.width - 20, 20);
+    ctx.fillText('LONGEST', centerX, 20);
+
+    // Draw "CHAIN:"
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('CHAIN:', centerX, 60);
+
+    // Draw chain number in BIG letters
+    ctx.font = 'bold 96px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`${longestChain}`, centerX, 100);
+
     ctx.restore();
+
+    // Draw median line showing median Y position of all circles
+    if (circles.length > 0) {
+        // Get all Y positions and sort them
+        const yPositions = circles.map(c => c.body.position.y).sort((a, b) => a - b);
+
+        // Calculate median
+        const medianY = yPositions.length % 2 === 0
+            ? (yPositions[yPositions.length / 2 - 1] + yPositions[yPositions.length / 2]) / 2
+            : yPositions[Math.floor(yPositions.length / 2)];
+
+        // Draw horizontal line across entire screen
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.5; // Semi-transparent
+        ctx.beginPath();
+        ctx.moveTo(0, medianY);
+        ctx.lineTo(canvas.width, medianY);
+        ctx.stroke();
+        ctx.restore();
+    }
 
     requestAnimationFrame(updateAnimations);
 }
@@ -533,12 +691,19 @@ function updateAnimations() {
 // Start animation loop
 updateAnimations();
 
-// Spawn initial 50 circles
-for (let i = 0; i < 50; i++) {
-    addCircle();
+// Don't spawn initial circles - let them accumulate naturally
+
+// Add circles periodically with decreasing interval
+function scheduleNextSpawn() {
+    setTimeout(() => {
+        if (!isGameOver) {
+            addCircle();
+            // Decrease spawn interval by 10ms each time
+            spawnInterval = Math.max(50, spawnInterval - SPAWN_INTERVAL_DECREASE); // Min 50ms
+        }
+        scheduleNextSpawn(); // Schedule next spawn
+    }, spawnInterval);
 }
 
-// Add circles periodically
-setInterval(() => {
-    addCircle();
-}, 500); // Add a new circle every 500ms
+// Start spawning
+scheduleNextSpawn();
