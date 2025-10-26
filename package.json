@@ -10,7 +10,14 @@
     "watch": "tsc --watch",
     "serve": "python3 -m http.server 22222 --directory dist",
     "tunnel": "ngrok http 22222",
-    "dev": "npm run build && npm run serve"
+    "dev": "npm run build && npm run serve",
+    "deploy": "npm run build && git add dist/ src/ && git commit -m 'Deploy updates' && git push origin main",
+    "android:build": "cd android-app && ./gradlew assembleDebug",
+    "android:install": "adb install -r android-app/app/build/outputs/apk/debug/app-debug.apk",
+    "android:deploy": "npm run android:build && npm run android:install",
+    "android:devices": "adb devices",
+    "android:logcat": "adb logcat -s chromium:V WebView:V",
+    "android:uninstall": "adb uninstall com.bounce.app"
   },
   "dependencies": {
     "matter-js": "^0.19.0"
