@@ -137,6 +137,11 @@ function findConnectedCircles(startCircle) {
 }
 // Remove a circle and all touching circles of the same color
 function removeConnectedCircles(clickedCircle) {
+    // Store position of clicked circle for selecting nearest after removal
+    const clickedPosition = {
+        x: clickedCircle.body.position.x,
+        y: clickedCircle.body.position.y
+    };
     const toRemove = findConnectedCircles(clickedCircle);
     // Remove all connected circles
     toRemove.forEach(circleData => {
@@ -183,21 +188,20 @@ function removeConnectedCircles(clickedCircle) {
             }
         }
     });
+    // Auto-select nearest bubble to where the popped bubble was
+    selectNearestCircleToPosition(clickedPosition.x, clickedPosition.y);
 }
-// Select the middle circle
-function selectMiddleCircle() {
+// Find and select nearest circle to a given position
+function selectNearestCircleToPosition(x, y) {
     if (circles.length === 0) {
         selectedCircleIndex = -1;
         return;
     }
-    // Find circle closest to center of screen
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
     let closestIndex = 0;
     let closestDistance = Number.MAX_VALUE;
     circles.forEach((circle, index) => {
-        const dx = circle.body.position.x - centerX;
-        const dy = circle.body.position.y - centerY;
+        const dx = circle.body.position.x - x;
+        const dy = circle.body.position.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance < closestDistance) {
             closestDistance = distance;
@@ -206,6 +210,12 @@ function selectMiddleCircle() {
     });
     selectedCircleIndex = closestIndex;
     lastInputTime = Date.now();
+}
+// Select the middle circle
+function selectMiddleCircle() {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    selectNearestCircleToPosition(centerX, centerY);
 }
 // Navigate to nearest circle in specified direction
 function navigateSelection(direction) {
