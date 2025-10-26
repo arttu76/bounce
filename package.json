@@ -6,15 +6,19 @@
   "author": "",
   "type": "module",
   "scripts": {
-    "build": "tsc --project tsconfig.receiver.json && tsc --project tsconfig.sender.json && cp src/index.html src/styles.css src/sender.html dist/",
+    "build": "tsc --project tsconfig.receiver.json && tsc --project tsconfig.sender.json && cp src/index.html src/styles.css src/sender.html dist/ && cp node_modules/matter-js/build/matter.min.js dist/",
     "watch": "tsc --watch",
     "serve": "python3 -m http.server 22222 --directory dist",
     "tunnel": "ngrok http 22222",
     "dev": "npm run build && npm run serve"
   },
+  "dependencies": {
+    "matter-js": "^0.19.0"
+  },
   "devDependencies": {
     "@types/chromecast-caf-receiver": "^6.0.0",
     "@types/chromecast-caf-sender": "^1.0.11",
+    "@types/matter-js": "^0.19.0",
     "typescript": "^5.3.3"
   }
 }
