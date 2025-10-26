@@ -104,6 +104,24 @@ function handleResize() {
     const height = window.innerHeight;
     initPhysics(width, height);
 }
+// Handle mouse/touch clicks on circles
+canvas.addEventListener('click', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    // Check if click hit any circle
+    for (let i = circles.length - 1; i >= 0; i--) {
+        const circleData = circles[i];
+        const dx = circleData.body.position.x - mouseX;
+        const dy = circleData.body.position.y - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance <= circleData.currentRadius) {
+            // Start explosion animation immediately
+            circleData.animationStartTime = Date.now();
+            break; // Only explode one circle per click
+        }
+    }
+});
 // Initialize
 handleResize();
 window.addEventListener('resize', handleResize);
@@ -150,21 +168,21 @@ function updateAnimations() {
     toRemove.forEach(circleData => {
         const explosionCenter = circleData.body.position;
         const explosionRadius = circleData.currentRadius * 10; // Affect circles within 10x radius
-        const explosionForce = 12.0; // Base force strength (2x original)
+        const explosionForce = 6.0; // Base force strength (halved)
         // Spawn 100 green particles
         for (let i = 0; i < 100; i++) {
             const angle = (Math.PI * 2 * i) / 100; // Evenly distributed around circle
-            const speed = 3 + Math.random() * 5; // Random speed between 3-8
+            const speed = 5 + Math.random() * 10; // Random speed between 5-15 (faster, more visible)
             // Start particles at the circle's edge
             const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
             const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
-            const particle = Bodies.circle(startX, startY, 2, {
-                restitution: 0.6,
-                friction: 0.01,
+            const particle = Bodies.circle(startX, startY, 4, {
+                restitution: 0.3,
+                friction: 0.05,
                 render: {
                     fillStyle: '#00ff00',
                     strokeStyle: '#00ff00',
-                    lineWidth: 0
+                    lineWidth: 1
                 }
             });
             // Set initial velocity outward
