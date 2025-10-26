@@ -233,10 +233,9 @@ function updateAnimations() {
             particlesToRemove.push(particle);
         }
         else {
-            // Fade from green to black
-            const color = lerpColor('#00ff00', '#000000', lifeProgress);
-            particle.body.render.fillStyle = color;
-            particle.body.render.strokeStyle = color;
+            // Fade opacity from 1 to 0
+            const opacity = 1 - lifeProgress;
+            particle.body.render.opacity = opacity;
             // Shrink particle as it ages (from 1.0 to 0.1 of initial size)
             const targetScale = 1 - (lifeProgress * 0.9); // Scale from 1.0 to 0.1
             const currentRadius = particle.initialRadius * targetScale;
