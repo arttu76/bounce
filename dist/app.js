@@ -74,25 +74,20 @@ function initPhysics(width, height) {
 function addCircle() {
     const width = canvas.width;
     // Random size between 2% and 5% of screen width
-    const visualRadius = width * (0.02 + Math.random() * 0.03);
-    const borderWidth = 6;
-    // Physics body should include the full border (drawn outside the radius)
-    const physicsRadius = visualRadius + borderWidth;
+    const radius = width * (0.02 + Math.random() * 0.03);
     // Random x position
-    const x = physicsRadius + Math.random() * (width - physicsRadius * 2);
+    const x = radius + Math.random() * (width - radius * 2);
     // Start above the screen
-    const y = -physicsRadius;
+    const y = -radius;
     // Random color: red, green, or blue
     const colors = ['#ff0000', '#00ff00', '#0000ff'];
     const color = colors[Math.floor(Math.random() * colors.length)];
-    // Create circle body with random color
-    const circle = Bodies.circle(x, y, physicsRadius, {
+    // Create circle body with random color (no border)
+    const circle = Bodies.circle(x, y, radius, {
         restitution: 0.6,
         friction: 0.1,
         render: {
-            fillStyle: color,
-            strokeStyle: color,
-            lineWidth: borderWidth
+            fillStyle: color
         }
     });
     World.add(engine.world, circle);
@@ -100,8 +95,8 @@ function addCircle() {
     circles.push({
         body: circle,
         createdAt: Date.now(),
-        initialRadius: visualRadius,
-        currentRadius: visualRadius,
+        initialRadius: radius,
+        currentRadius: radius,
         color: color
     });
 }
@@ -118,8 +113,8 @@ function areTouching(circle1, circle2) {
     const dx = pos2.x - pos1.x;
     const dy = pos2.y - pos1.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    // Two circles touch if distance between centers <= sum of radii
-    return distance <= (circle1.currentRadius + circle2.currentRadius);
+    // Two circles touch if distance between centers <= sum of radii (with small tolerance)
+    return distance <= (circle1.currentRadius + circle2.currentRadius + 5); // Add 5px tolerance
 }
 // Find all touching circles of the same color recursively
 function findConnectedCircles(startCircle, visited) {
@@ -159,9 +154,7 @@ function removeConnectedCircles(clickedCircle) {
                 restitution: 0.3,
                 friction: 0.05,
                 render: {
-                    fillStyle: circleData.color,
-                    strokeStyle: circleData.color,
-                    lineWidth: 1
+                    fillStyle: circleData.color
                 }
             });
             Body.setVelocity(particle, {
@@ -416,6 +409,15 @@ function updateAnimations() {
         ctx.lineWidth = 5;
         ctx.stroke();
     }
+    // Draw bubble counter in top right corner
+    const ctx = render.context;
+    ctx.save();
+    ctx.font = 'bold 48px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`${circles.length}`, canvas.width - 20, 20);
+    ctx.restore();
     requestAnimationFrame(updateAnimations);
 }
 // Start animation loop
