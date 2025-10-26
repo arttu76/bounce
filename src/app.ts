@@ -11,7 +11,7 @@ context.start(options);
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
 // Matter.js is loaded globally from the script tag
-// @ts-ignore - Matter is loaded from matter.min.js
+// @ts-ignore - loaded as global from matter.min.js
 const { Engine, Render, World, Bodies, Runner } = Matter;
 
 // Create engine
@@ -19,16 +19,11 @@ const engine = Engine.create({
     gravity: { x: 0, y: 1, scale: 0.001 }
 });
 
-// @ts-ignore
-let render: any;
-// @ts-ignore
-let ground: any;
-// @ts-ignore
-let wallLeft: any;
-// @ts-ignore
-let wallRight: any;
-// @ts-ignore
-let runner: any;
+let render: import('matter-js').Render;
+let ground: import('matter-js').Body;
+let wallLeft: import('matter-js').Body;
+let wallRight: import('matter-js').Body;
+let runner: import('matter-js').Runner;
 
 // Initialize physics world
 function initPhysics(width: number, height: number) {
@@ -89,8 +84,8 @@ function initPhysics(width: number, height: number) {
 function addCircle() {
     const width = canvas.width;
 
-    // Random size between 5% and 15% of screen width
-    const radius = width * (0.05 + Math.random() * 0.10);
+    // Random size between 2% and 5% of screen width
+    const radius = width * (0.02 + Math.random() * 0.03);
 
     // Random x position
     const x = radius + Math.random() * (width - radius * 2);
