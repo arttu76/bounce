@@ -75,30 +75,34 @@ function addCircle() {
     const width = canvas.width;
     // Random size between 2% and 5% of screen width
     const visualRadius = width * (0.02 + Math.random() * 0.03);
-    const borderWidth = 6; // 3x wider (was 2)
+    const borderWidth = 6;
     // Physics body should include the full border (drawn outside the radius)
     const physicsRadius = visualRadius + borderWidth;
     // Random x position
     const x = physicsRadius + Math.random() * (width - physicsRadius * 2);
     // Start above the screen
     const y = -physicsRadius;
-    // Create circle body with white fill and white outline
+    // Random color: red, green, or blue
+    const colors = ['#ff0000', '#00ff00', '#0000ff'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    // Create circle body with random color
     const circle = Bodies.circle(x, y, physicsRadius, {
         restitution: 0.6,
         friction: 0.1,
         render: {
-            fillStyle: '#ffffff',
-            strokeStyle: '#ffffff',
+            fillStyle: color,
+            strokeStyle: color,
             lineWidth: borderWidth
         }
     });
     World.add(engine.world, circle);
-    // Track this circle (store visual radius for consistent sizing)
+    // Track this circle
     circles.push({
         body: circle,
         createdAt: Date.now(),
         initialRadius: visualRadius,
-        currentRadius: visualRadius
+        currentRadius: visualRadius,
+        color: color
     });
 }
 // Handle window resize
@@ -107,69 +111,87 @@ function handleResize() {
     const height = window.innerHeight;
     initPhysics(width, height);
 }
-// Explode a circle immediately (used for clicks and timed animations)
-function explodeCircle(circleData) {
-    const explosionCenter = circleData.body.position;
-    const explosionRadius = circleData.currentRadius * 10;
-    const explosionForce = 6.0;
-    // Spawn 33 green particles
-    for (let i = 0; i < 33; i++) {
-        const angle = (Math.PI * 2 * i) / 33;
-        const speed = (5 + Math.random() * 10) / 3;
-        const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
-        const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
-        const particleRadius = 2;
-        const particle = Bodies.circle(startX, startY, particleRadius, {
-            restitution: 0.3,
-            friction: 0.05,
-            render: {
-                fillStyle: '#00ff00',
-                strokeStyle: '#00ff00',
-                lineWidth: 1
-            }
-        });
-        Body.setVelocity(particle, {
-            x: Math.cos(angle) * speed,
-            y: Math.sin(angle) * speed
-        });
-        World.add(engine.world, particle);
-        particles.push({
-            body: particle,
-            createdAt: Date.now(),
-            initialRadius: particleRadius
-        });
+// Check if two circles are touching
+function areTouching(circle1, circle2) {
+    const pos1 = circle1.body.position;
+    const pos2 = circle2.body.position;
+    const dx = pos2.x - pos1.x;
+    const dy = pos2.y - pos1.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    // Two circles touch if distance between centers <= sum of radii
+    return distance <= (circle1.currentRadius + circle2.currentRadius);
+}
+// Find all touching circles of the same color recursively
+function findConnectedCircles(startCircle, visited) {
+    if (visited.has(startCircle)) {
+        return [];
     }
-    // Apply outward velocity to nearby circles
+    visited.add(startCircle);
+    const connected = [startCircle];
+    // Find all circles that touch this one and have the same color
     circles.forEach(otherCircle => {
-        if (otherCircle !== circleData && !otherCircle.animationStartTime) {
-            const dx = otherCircle.body.position.x - explosionCenter.x;
-            const dy = otherCircle.body.position.y - explosionCenter.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < explosionRadius && distance > 0) {
-                const forceMagnitude = explosionForce * (1 - distance / explosionRadius);
-                const forceX = (dx / distance) * forceMagnitude;
-                const forceY = (dy / distance) * forceMagnitude;
-                Body.setVelocity(otherCircle.body, {
-                    x: otherCircle.body.velocity.x + forceX,
-                    y: otherCircle.body.velocity.y + forceY
-                });
+        if (otherCircle !== startCircle &&
+            !visited.has(otherCircle) &&
+            otherCircle.color === startCircle.color &&
+            areTouching(startCircle, otherCircle)) {
+            // Recursively find connected circles
+            const moreConnected = findConnectedCircles(otherCircle, visited);
+            connected.push(...moreConnected);
+        }
+    });
+    return connected;
+}
+// Remove a circle and all touching circles of the same color
+function removeConnectedCircles(clickedCircle) {
+    const visited = new Set();
+    const toRemove = findConnectedCircles(clickedCircle, visited);
+    // Remove all connected circles
+    toRemove.forEach(circleData => {
+        const explosionCenter = circleData.body.position;
+        // Spawn 33 particles with same color as the circle
+        for (let i = 0; i < 33; i++) {
+            const angle = (Math.PI * 2 * i) / 33;
+            const speed = (5 + Math.random() * 10) / 3;
+            const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
+            const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
+            const particleRadius = 2;
+            const particle = Bodies.circle(startX, startY, particleRadius, {
+                restitution: 0.3,
+                friction: 0.05,
+                render: {
+                    fillStyle: circleData.color,
+                    strokeStyle: circleData.color,
+                    lineWidth: 1
+                }
+            });
+            Body.setVelocity(particle, {
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
+            });
+            World.add(engine.world, particle);
+            particles.push({
+                body: particle,
+                createdAt: Date.now(),
+                initialRadius: particleRadius
+            });
+        }
+        // Remove the circle from physics world
+        World.remove(engine.world, circleData.body);
+    });
+    // Remove from circles array
+    toRemove.forEach(circleData => {
+        const index = circles.indexOf(circleData);
+        if (index > -1) {
+            circles.splice(index, 1);
+            // Adjust selected index if needed
+            if (selectedCircleIndex === index) {
+                selectedCircleIndex = -1;
+            }
+            else if (selectedCircleIndex > index) {
+                selectedCircleIndex--;
             }
         }
     });
-    // Remove the circle
-    World.remove(engine.world, circleData.body);
-    const index = circles.indexOf(circleData);
-    if (index > -1) {
-        circles.splice(index, 1);
-        // If this was the selected circle, deselect
-        if (selectedCircleIndex === index) {
-            selectedCircleIndex = -1;
-        }
-        else if (selectedCircleIndex > index) {
-            // Adjust selected index if needed
-            selectedCircleIndex--;
-        }
-    }
 }
 // Select the middle circle
 function selectMiddleCircle() {
@@ -284,7 +306,7 @@ canvas.addEventListener('click', (event) => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance <= circleData.currentRadius) {
             // Explode immediately on click
-            explodeCircle(circleData);
+            removeConnectedCircles(circleData);
             break; // Only explode one circle per click
         }
     }
@@ -311,7 +333,7 @@ window.addEventListener('keydown', (event) => {
         case 'Enter': // OK button
             event.preventDefault();
             if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
-                explodeCircle(circles[selectedCircleIndex]);
+                removeConnectedCircles(circles[selectedCircleIndex]);
             }
             break;
         case ' ': // Space bar (alternative)
@@ -320,7 +342,7 @@ window.addEventListener('keydown', (event) => {
                 selectMiddleCircle();
             }
             else if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
-                explodeCircle(circles[selectedCircleIndex]);
+                removeConnectedCircles(circles[selectedCircleIndex]);
             }
             break;
     }
@@ -353,32 +375,7 @@ function updateAnimations() {
     if (selectedCircleIndex >= circles.length) {
         selectedCircleIndex = -1;
     }
-    circles.forEach(circleData => {
-        if (circleData.animationStartTime) {
-            const elapsed = now - circleData.animationStartTime;
-            const progress = Math.min(elapsed / 6000, 1); // 6 seconds
-            if (progress >= 1) {
-                // Animation complete, mark for removal
-                toRemove.push(circleData);
-            }
-            else {
-                // Update circle size (grow to 125% of initial size)
-                const newRadius = circleData.initialRadius * (1 + progress * 0.25);
-                const scaleFactor = newRadius / circleData.currentRadius;
-                Body.scale(circleData.body, scaleFactor, scaleFactor);
-                circleData.currentRadius = newRadius;
-                // Update colors
-                const fillColor = lerpColor('#ffffff', '#000000', progress);
-                const strokeColor = lerpColor('#ffffff', '#00ff00', progress);
-                circleData.body.render.fillStyle = fillColor;
-                circleData.body.render.strokeStyle = strokeColor;
-            }
-        }
-    });
-    // Remove completed animations with explosion effect
-    toRemove.forEach(circleData => {
-        explodeCircle(circleData);
-    });
+    // No automatic animation logic anymore
     // Update particle colors, size, and remove old ones
     const particlesToRemove = [];
     particles.forEach(particle => {
@@ -415,7 +412,7 @@ function updateAnimations() {
         const selectionRadius = selectedCircle.currentRadius + 15; // Offset from circle edge
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, selectionRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = '#ff0000'; // Red
+        ctx.strokeStyle = '#ffffff'; // White
         ctx.lineWidth = 5;
         ctx.stroke();
     }
@@ -423,22 +420,6 @@ function updateAnimations() {
 }
 // Start animation loop
 updateAnimations();
-// Every 6 seconds, select 8-16 oldest circles to animate
-setInterval(() => {
-    // Find circles not already animating
-    const nonAnimating = circles.filter(c => !c.animationStartTime);
-    if (nonAnimating.length > 0) {
-        // Sort by creation time (oldest first)
-        nonAnimating.sort((a, b) => a.createdAt - b.createdAt);
-        // Select random number between 8 and 16 (or all if less than 8)
-        const count = Math.min(Math.floor(8 + Math.random() * 9), // 8-16
-        nonAnimating.length);
-        // Start animation for selected circles
-        for (let i = 0; i < count; i++) {
-            nonAnimating[i].animationStartTime = Date.now();
-        }
-    }
-}, 6000);
 // Spawn initial 50 circles
 for (let i = 0; i < 50; i++) {
     addCircle();
