@@ -50,15 +50,15 @@ export function drawGameOver() {
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 40);
+    ctx.fillText('MAX', centerX, 140);
 
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 80);
+    ctx.fillText('CHAIN', centerX, 180);
 
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${state.maxChain}`, centerX, 120);
+    ctx.fillText(`${state.maxChain}`, centerX, 220);
 
     ctx.restore();
 }
@@ -90,17 +90,17 @@ export function drawMaxChainDisplay() {
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 40);
+    ctx.fillText('MAX', centerX, 140);
 
     // Draw "CHAIN"
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 80);
+    ctx.fillText('CHAIN', centerX, 180);
 
     // Draw chain number in BIG letters
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${state.maxChain}`, centerX, 120);
+    ctx.fillText(`${state.maxChain}`, centerX, 220);
 
     ctx.restore();
 }

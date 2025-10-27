@@ -117,6 +117,15 @@ export function calculateHighestConnectedBubble(): number | null {
 
     if (!lowestBubble) return null;
 
+    // Only check for game over if the lowest bubble is near the bottom of the screen
+    // This ensures we only trigger game over when bubbles stack from ground level upward
+    // Ignore floating bubbles that haven't settled to the bottom yet
+    const lowestBubblePercentage = (lowestBubble.body.position.y / canvas.height) * 100;
+    if (lowestBubblePercentage < 70) {
+        // Lowest bubble is in the top 70% of screen - not grounded yet
+        return null;
+    }
+
     // Find all connected circles (regardless of color)
     const connected = findAllConnectedCircles(lowestBubble);
 
