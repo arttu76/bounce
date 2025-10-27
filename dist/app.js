@@ -99,8 +99,7 @@ function addCircle() {
         createdAt: Date.now(),
         initialRadius: radius,
         currentRadius: radius,
-        color: color,
-        hasTouchedOther: false
+        color: color
     });
 }
 // Handle window resize
@@ -137,6 +136,55 @@ function findConnectedCircles(startCircle) {
         });
     }
     return Array.from(connected);
+}
+// Find all physically connected circles regardless of color
+function findAllConnectedCircles(startCircle) {
+    const connected = new Set([startCircle]);
+    const toCheck = [startCircle];
+    while (toCheck.length > 0) {
+        const current = toCheck.pop();
+        circles.forEach(otherCircle => {
+            if (!connected.has(otherCircle) && areTouching(current, otherCircle)) {
+                connected.add(otherCircle);
+                toCheck.push(otherCircle);
+            }
+        });
+    }
+    return Array.from(connected);
+}
+// Calculate the highest connected bubble from the lowest bubble
+// Returns percentage: 0 = top of screen, 100 = bottom, negative = above top, null = no chain
+function calculateHighestConnectedBubble() {
+    if (circles.length === 0)
+        return null;
+    // Find the lowest bubble (highest Y value since Y increases downward)
+    let lowestBubble = null;
+    let maxY = -Infinity;
+    circles.forEach(circle => {
+        if (circle.body.position.y > maxY) {
+            maxY = circle.body.position.y;
+            lowestBubble = circle;
+        }
+    });
+    if (!lowestBubble)
+        return null;
+    // Find all connected circles (regardless of color)
+    const connected = findAllConnectedCircles(lowestBubble);
+    if (connected.length === 0)
+        return null;
+    // Find the highest bubble in the chain (lowest Y value)
+    let minY = Infinity;
+    connected.forEach(circle => {
+        if (circle.body.position.y < minY) {
+            minY = circle.body.position.y;
+        }
+    });
+    // Calculate percentage
+    // 0 = top of screen (y = 0)
+    // 100 = bottom of screen (y = canvas.height)
+    // negative = above top of screen (y < 0)
+    const percentage = (minY / canvas.height) * 100;
+    return percentage;
 }
 // Remove a circle and all touching circles of the same color
 function removeConnectedCircles(clickedCircle) {
@@ -460,28 +508,11 @@ function updateAnimations() {
         requestAnimationFrame(updateAnimations);
         return;
     }
-    // Update hasTouchedOther flag for all bubbles
-    circles.forEach(circle => {
-        if (!circle.hasTouchedOther) {
-            // Check if this bubble is touching any other bubble
-            const isTouchingOther = circles.some(otherCircle => otherCircle !== circle && areTouching(circle, otherCircle));
-            if (isTouchingOther) {
-                circle.hasTouchedOther = true;
-            }
-        }
-    });
-    // Calculate median position and check game over
-    // Only consider bubbles that have touched others
-    const touchedCircles = circles.filter(c => c.hasTouchedOther);
-    if (touchedCircles.length >= 10) {
-        const yPositions = touchedCircles.map(c => c.body.position.y).sort((a, b) => a - b);
-        const targetPositions = yPositions.slice(3, 13);
-        const medianY = targetPositions.reduce((sum, y) => sum + y, 0) / targetPositions.length;
-        const dangerLineY = canvas.height * 0.05; // 5% from top
-        // Check for game over
-        if (medianY <= dangerLineY) {
-            triggerGameOver();
-        }
+    // Check for game over using new chain-based detection
+    const highestConnectedPercentage = calculateHighestConnectedBubble();
+    if (highestConnectedPercentage !== null && highestConnectedPercentage < 0) {
+        // Game over: the lowest bubble connects to a bubble above the screen
+        triggerGameOver();
     }
     // Validate selected index
     if (selectedCircleIndex >= circles.length) {
