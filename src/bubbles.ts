@@ -117,12 +117,14 @@ export function calculateHighestConnectedBubble(): number | null {
 
     if (!lowestBubble) return null;
 
-    // Only check for game over if the lowest bubble is near the bottom of the screen
-    // This ensures we only trigger game over when bubbles stack from ground level upward
-    // Ignore floating bubbles that haven't settled to the bottom yet
-    const lowestBubblePercentage = (lowestBubble.body.position.y / canvas.height) * 100;
-    if (lowestBubblePercentage < 70) {
-        // Lowest bubble is in the top 70% of screen - not grounded yet
+    // Only check for game over if the lowest bubble is actually touching or very close to the ground
+    // A bubble touches the ground when: position.y + radius >= canvas.height
+    // Use a small tolerance (10px) to account for bubbles slightly above ground
+    const bubbleBottomEdge = lowestBubble.body.position.y + lowestBubble.currentRadius;
+    const isGrounded = bubbleBottomEdge >= canvas.height - 10;
+
+    if (!isGrounded) {
+        // Lowest bubble is not on the ground - ignore floating bubbles
         return null;
     }
 
