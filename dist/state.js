@@ -1,38 +1,23 @@
 import { INITIAL_SPAWN_INTERVAL } from './constants';
-// Game state
-export const circles = [];
-export const particles = [];
-export let selectedCircleIndex = -1;
-export let maxChain = 0;
-export let highScore = 0;
-export let isGameOver = false;
-export let gameOverStartTime = 0;
-export let isNewHighScore = false;
-// Spawning state
-export let nextColorIndex = 0;
-export let spawnInterval = INITIAL_SPAWN_INTERVAL;
-// Setters for state that needs to be modified from other modules
-export function setSelectedCircleIndex(index) {
-    selectedCircleIndex = index;
-}
-export function setMaxChain(value) {
-    maxChain = value;
-}
-export function setHighScore(value) {
-    highScore = value;
-}
-export function setIsGameOver(value) {
-    isGameOver = value;
-}
-export function setGameOverStartTime(time) {
-    gameOverStartTime = time;
-}
-export function setIsNewHighScore(value) {
-    isNewHighScore = value;
-}
-export function setNextColorIndex(index) {
-    nextColorIndex = index;
-}
-export function setSpawnInterval(interval) {
-    spawnInterval = interval;
+// Game state object
+export const state = {
+    // Collections
+    circles: [],
+    particles: [],
+    // Selection
+    selectedCircleIndex: -1,
+    // Score tracking
+    maxChain: 0,
+    highScore: 0,
+    // Game over state
+    isGameOver: false,
+    gameOverStartTime: 0,
+    isNewHighScore: false,
+    // Spawning state
+    nextColorIndex: 0,
+    spawnInterval: INITIAL_SPAWN_INTERVAL
+};
+// Helper function to update state (optional, for convenience)
+export function updateState(updates) {
+    Object.assign(state, updates);
 }

@@ -1,14 +1,14 @@
 import { canvas } from './physics';
-import { circles, selectedCircleIndex, setSelectedCircleIndex } from './state';
+import { state } from './state';
 // Find and select nearest circle to a given position
 export function selectNearestCircleToPosition(x, y) {
-    if (circles.length === 0) {
-        setSelectedCircleIndex(-1);
+    if (state.circles.length === 0) {
+        state.selectedCircleIndex = -1;
         return;
     }
     let closestIndex = 0;
     let closestDistance = Number.MAX_VALUE;
-    circles.forEach((circle, index) => {
+    state.circles.forEach((circle, index) => {
         const dx = circle.body.position.x - x;
         const dy = circle.body.position.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -17,7 +17,7 @@ export function selectNearestCircleToPosition(x, y) {
             closestIndex = index;
         }
     });
-    setSelectedCircleIndex(closestIndex);
+    state.selectedCircleIndex = closestIndex;
 }
 // Select the middle circle
 export function selectMiddleCircle() {
@@ -27,14 +27,14 @@ export function selectMiddleCircle() {
 }
 // Navigate to nearest circle in specified direction
 export function navigateSelection(direction) {
-    if (circles.length === 0)
+    if (state.circles.length === 0)
         return;
     // If no circle selected, select middle one
-    if (selectedCircleIndex === -1) {
+    if (state.selectedCircleIndex === -1) {
         selectMiddleCircle();
         return;
     }
-    const currentCircle = circles[selectedCircleIndex];
+    const currentCircle = state.circles[state.selectedCircleIndex];
     if (!currentCircle) {
         selectMiddleCircle();
         return;
@@ -59,8 +59,8 @@ export function navigateSelection(direction) {
     }
     let bestIndex = -1;
     let bestScore = Number.MAX_VALUE;
-    circles.forEach((circle, index) => {
-        if (index === selectedCircleIndex)
+    state.circles.forEach((circle, index) => {
+        if (index === state.selectedCircleIndex)
             return;
         const pos = circle.body.position;
         const dx = pos.x - currentPos.x;
@@ -98,6 +98,6 @@ export function navigateSelection(direction) {
         }
     });
     if (bestIndex !== -1) {
-        setSelectedCircleIndex(bestIndex);
+        state.selectedCircleIndex = bestIndex;
     }
 }

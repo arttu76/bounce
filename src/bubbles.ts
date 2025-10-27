@@ -1,7 +1,7 @@
 import { CircleData } from './types';
 import { COLORS } from './constants';
 import { canvas, engine } from './physics';
-import { circles, particles, nextColorIndex, setNextColorIndex, maxChain, setMaxChain } from './state';
+import { state } from './state';
 import { selectNearestCircleToPosition } from './selection';
 
 // @ts-ignore - loaded as global from matter.min.js
@@ -21,8 +21,8 @@ export function addCircle() {
     const y = -radius;
 
     // Sequential color: red, green, blue, red, green, blue...
-    const color = COLORS[nextColorIndex];
-    setNextColorIndex((nextColorIndex + 1) % COLORS.length);
+    const color = COLORS[state.nextColorIndex];
+    state.nextColorIndex = (state.nextColorIndex + 1) % COLORS.length;
 
     // Create circle body with random color (no border)
     const circle = Bodies.circle(x, y, radius, {
@@ -36,7 +36,7 @@ export function addCircle() {
     World.add(engine.world, circle);
 
     // Track this circle
-    circles.push({
+    state.circles.push({
         body: circle,
         createdAt: Date.now(),
         initialRadius: radius,
@@ -66,13 +66,13 @@ export function findConnectedCircles(startCircle: CircleData, colorFilter?: stri
 
     if (colorFilter === null) {
         // null = check all colors
-        circlesToCheck = circles;
+        circlesToCheck = state.circles;
     } else if (colorFilter === undefined) {
         // undefined = use startCircle's color (default behavior)
-        circlesToCheck = circles.filter(c => c.color === startCircle.color);
+        circlesToCheck = state.circles.filter(c => c.color === startCircle.color);
     } else {
         // string = use specific color
-        circlesToCheck = circles.filter(c => c.color === colorFilter);
+        circlesToCheck = state.circles.filter(c => c.color === colorFilter);
     }
 
     const connected = new Set<CircleData>([startCircle]);
@@ -102,13 +102,13 @@ export function findAllConnectedCircles(startCircle: CircleData): CircleData[] {
 // Calculate the highest connected bubble from the lowest bubble
 // Returns percentage: 0 = top of screen, 100 = bottom, negative = above top, null = no chain
 export function calculateHighestConnectedBubble(): number | null {
-    if (circles.length === 0) return null;
+    if (state.circles.length === 0) return null;
 
     // Find the lowest bubble (highest Y value since Y increases downward)
     let lowestBubble: CircleData | null = null;
     let maxY = -Infinity;
 
-    circles.forEach(circle => {
+    state.circles.forEach(circle => {
         if (circle.body.position.y > maxY) {
             maxY = circle.body.position.y;
             lowestBubble = circle;
@@ -150,8 +150,8 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
     const toRemove = findConnectedCircles(clickedCircle);
 
     // Update max chain for current round
-    if (toRemove.length > maxChain) {
-        setMaxChain(toRemove.length);
+    if (toRemove.length > state.maxChain) {
+        state.maxChain = toRemove.length;
     }
 
     // Remove all connected circles
@@ -181,7 +181,7 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
             });
 
             World.add(engine.world, particle);
-            particles.push({
+            state.particles.push({
                 body: particle,
                 createdAt: Date.now(),
                 initialRadius: particleRadius
@@ -194,9 +194,9 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
 
     // Remove from circles array
     toRemove.forEach(circleData => {
-        const index = circles.indexOf(circleData);
+        const index = state.circles.indexOf(circleData);
         if (index > -1) {
-            circles.splice(index, 1);
+            state.circles.splice(index, 1);
         }
     });
 

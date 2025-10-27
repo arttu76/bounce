@@ -1,12 +1,5 @@
 import { render, canvas } from './physics';
-import {
-    circles,
-    selectedCircleIndex,
-    maxChain,
-    highScore,
-    isNewHighScore,
-    gameOverStartTime
-} from './state';
+import { state } from './state';
 import { GAME_OVER_CLICK_DELAY } from './constants';
 
 // Draw game over screen
@@ -21,7 +14,7 @@ export function drawGameOver() {
     // Draw "New high score!" if achieved
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    if (isNewHighScore) {
+    if (state.isNewHighScore) {
         ctx.font = 'bold 48px Arial';
         ctx.fillStyle = '#FFD700'; // Gold/yellow color
         ctx.fillText('👑 New high score!', canvas.width / 2, canvas.height / 2 - 150);
@@ -35,15 +28,15 @@ export function drawGameOver() {
     // Draw max chain achieved this round
     ctx.font = 'bold 40px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`Max chain: ${maxChain}`, canvas.width / 2, canvas.height / 2 + 30);
+    ctx.fillText(`Max chain: ${state.maxChain}`, canvas.width / 2, canvas.height / 2 + 30);
 
     // Draw high score
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#aaaaaa';
-    ctx.fillText(`High score: ${highScore}`, canvas.width / 2, canvas.height / 2 + 80);
+    ctx.fillText(`High score: ${state.highScore}`, canvas.width / 2, canvas.height / 2 + 80);
 
     // Draw "Click to restart" message after delay
-    const timeSinceGameOver = Date.now() - gameOverStartTime;
+    const timeSinceGameOver = Date.now() - state.gameOverStartTime;
     if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
         ctx.font = 'bold 32px Arial';
         ctx.fillStyle = '#ffffff';
@@ -65,15 +58,15 @@ export function drawGameOver() {
 
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${maxChain}`, centerX, 120);
+    ctx.fillText(`${state.maxChain}`, centerX, 120);
 
     ctx.restore();
 }
 
 // Draw selection indicator
 export function drawSelectionIndicator() {
-    if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
-        const selectedCircle = circles[selectedCircleIndex];
+    if (state.selectedCircleIndex >= 0 && state.selectedCircleIndex < state.circles.length) {
+        const selectedCircle = state.circles[state.selectedCircleIndex];
         const ctx = render.context;
         const pos = selectedCircle.body.position;
         const selectionRadius = selectedCircle.currentRadius + 15; // Offset from circle edge
@@ -107,7 +100,7 @@ export function drawMaxChainDisplay() {
     // Draw chain number in BIG letters
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${maxChain}`, centerX, 120);
+    ctx.fillText(`${state.maxChain}`, centerX, 120);
 
     ctx.restore();
 }
