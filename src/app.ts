@@ -631,20 +631,20 @@ function drawGameOver() {
 
     // Draw max chain in top right corner (same as during game)
     ctx.textAlign = 'center';
-    const centerX = canvas.width - 100;
+    const centerX = canvas.width - 200;
 
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 20);
+    ctx.fillText('MAX', centerX, 40);
 
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 60);
+    ctx.fillText('CHAIN', centerX, 80);
 
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${maxChain}`, centerX, 100);
+    ctx.fillText(`${maxChain}`, centerX, 120);
 
     ctx.restore();
 }
@@ -733,23 +733,23 @@ function updateAnimations() {
     const ctx = render.context;
     ctx.save();
     ctx.textAlign = 'center';
-    const centerX = canvas.width - 100; // Centered in top right area
+    const centerX = canvas.width - 200; // Centered in top right area
 
     // Draw "MAX"
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 20);
+    ctx.fillText('MAX', centerX, 40);
 
     // Draw "CHAIN"
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 60);
+    ctx.fillText('CHAIN', centerX, 80);
 
     // Draw chain number in BIG letters
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${maxChain}`, centerX, 100);
+    ctx.fillText(`${maxChain}`, centerX, 120);
 
     ctx.restore();
 
