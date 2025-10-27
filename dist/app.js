@@ -8,7 +8,6 @@ let highScore = 0; // All-time high score across all rounds
 let isGameOver = false; // Game over state
 let gameOverStartTime = 0; // When game over started
 let isNewHighScore = false; // Whether current game achieved new high score
-let hasKeyPressedDuringGameOver = false; // Whether any key was pressed during game over
 const GAME_OVER_CLICK_DELAY = 2000; // Wait 2 seconds before accepting clicks to restart
 // Spawning state
 let nextColorIndex = 0; // Index for cycling through colors
@@ -380,7 +379,6 @@ canvas.addEventListener('click', (event) => {
 window.addEventListener('keydown', (event) => {
     // Check if game over - restart on any key if enough time has passed
     if (isGameOver) {
-        hasKeyPressedDuringGameOver = true; // Mark that a key was pressed
         const timeSinceGameOver = Date.now() - gameOverStartTime;
         if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
             event.preventDefault();
@@ -472,7 +470,6 @@ function restartGame() {
     selectedCircleIndex = -1;
     maxChain = 0; // Reset max chain for new round
     isNewHighScore = false;
-    hasKeyPressedDuringGameOver = false;
     // Keep highScore - it persists across games
     // Remove danger zone animation
     document.body.classList.remove('danger-zone');
@@ -508,9 +505,9 @@ function drawGameOver() {
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#aaaaaa';
     ctx.fillText(`High score: ${highScore}`, canvas.width / 2, canvas.height / 2 + 80);
-    // Draw "Click to restart" message only if keypress detected
+    // Draw "Click to restart" message after delay
     const timeSinceGameOver = Date.now() - gameOverStartTime;
-    if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY && hasKeyPressedDuringGameOver) {
+    if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
         ctx.font = 'bold 32px Arial';
         ctx.fillStyle = '#ffffff';
         ctx.fillText('Click to restart', canvas.width / 2, canvas.height / 2 + 150);
