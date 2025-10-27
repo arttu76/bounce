@@ -12,6 +12,22 @@ body {
     position: relative;
 }
 
+body.danger-zone {
+    animation: pulseRed 2s ease-in-out infinite;
+}
+
+@keyframes pulseRed {
+    0% {
+        background-color: black;
+    }
+    50% {
+        background-color: #ff0000;
+    }
+    100% {
+        background-color: black;
+    }
+}
+
 #canvas {
     display: block;
     width: 100%;

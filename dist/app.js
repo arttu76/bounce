@@ -444,6 +444,8 @@ function triggerGameOver() {
         return; // Already in game over state
     isGameOver = true;
     gameOverStartTime = Date.now();
+    // Remove danger zone animation when game is over
+    document.body.classList.remove('danger-zone');
     // Check if current round achieved new high score
     if (maxChain > highScore) {
         highScore = maxChain;
@@ -472,6 +474,8 @@ function restartGame() {
     isNewHighScore = false;
     hasKeyPressedDuringGameOver = false;
     // Keep highScore - it persists across games
+    // Remove danger zone animation
+    document.body.classList.remove('danger-zone');
     // Reset spawning state
     spawnInterval = INITIAL_SPAWN_INTERVAL;
     nextColorIndex = 0;
@@ -542,6 +546,13 @@ function updateAnimations() {
     if (highestConnectedPercentage !== null && highestConnectedPercentage < 0) {
         // Game over: the lowest bubble connects to a bubble above the screen
         triggerGameOver();
+    }
+    // Toggle danger zone background animation based on percentage
+    if (highestConnectedPercentage !== null && highestConnectedPercentage <= 20) {
+        document.body.classList.add('danger-zone');
+    }
+    else {
+        document.body.classList.remove('danger-zone');
     }
     // Validate selected index
     if (selectedCircleIndex >= circles.length) {
