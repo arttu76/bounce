@@ -1,6 +1,8 @@
 # Bounce - Color-Matching Bubble Game for Chromecast with Google TV
 
-A physics-based bubble popping game featuring red, green, and blue bubbles. Built with TypeScript and Matter.js, deployable as both a web app and an Android TV app for Chromecast with Google TV.
+**🎮 Play now: https://arttu76.github.io/bounce/**
+
+A physics-based bubble popping game featuring red, green, and blue bubbles. Built with TypeScript and Matter.js, bundled into a single-file web app and wrapped as an Android TV app for Chromecast with Google TV.
 
 ## Features
 
@@ -26,12 +28,23 @@ A physics-based bubble popping game featuring red, green, and blue bubbles. Buil
 ```
 /Users/arttu/cc/
 ├── src/
-│   ├── app.ts              # Main game logic with physics engine
-│   ├── sender.ts           # Web-based sender for casting
-│   ├── index.html          # Receiver HTML page
-│   ├── sender.html         # Sender HTML page
+│   ├── app.ts              # Main entry point
+│   ├── physics.ts          # Physics engine setup
+│   ├── bubbles.ts          # Bubble creation and management
+│   ├── gameLoop.ts         # Animation loop
+│   ├── input.ts            # Keyboard/remote input handling
+│   ├── rendering.ts        # Canvas rendering
+│   ├── selection.ts        # Bubble selection logic
+│   ├── spawning.ts         # Bubble spawning
+│   ├── gameOver.ts         # Game over logic
+│   ├── state.ts            # Game state management
+│   ├── constants.ts        # Configuration constants
+│   ├── types.ts            # TypeScript type definitions
 │   └── styles.css          # Styling
-├── dist/                   # Compiled JavaScript output (deployed to GitHub Pages)
+├── index.html              # HTML entry point
+├── vite.config.ts          # Vite bundler configuration
+├── dist/
+│   └── index.html          # Single-file bundled output (9KB, deployed to GitHub Pages)
 ├── android-app/            # Android TV app wrapper
 │   ├── app/
 │   │   ├── src/main/
@@ -43,15 +56,14 @@ A physics-based bubble popping game featuring red, green, and blue bubbles. Buil
 │   ├── settings.gradle.kts
 │   └── README.md           # Android build & sideload instructions
 ├── package.json
-├── tsconfig.receiver.json
-└── tsconfig.sender.json
+└── tsconfig.json
 ```
 
 ## Technologies
 
 - **TypeScript**: Type-safe JavaScript development
 - **Matter.js**: 2D physics engine for realistic animations
-- **Google Cast SDK**: For casting functionality (web version)
+- **Vite**: Modern bundler for optimized single-file output
 - **Kotlin**: Android TV app wrapper with WebView
 - **GitHub Pages**: Static hosting for web app
 
@@ -63,11 +75,14 @@ A physics-based bubble popping game featuring red, green, and blue bubbles. Buil
 # Install dependencies
 npm install
 
-# Build TypeScript to JavaScript
+# Start development server with hot reload at http://localhost:5173
+npm run dev
+
+# Build optimized single-file HTML for production
 npm run build
 
-# Serve locally at http://localhost:22222
-npm run serve
+# Preview production build locally
+npm run preview
 
 # Deploy to GitHub Pages
 npm run deploy
@@ -107,9 +122,9 @@ npm run deploy
 ```
 
 This will:
-1. Build TypeScript to JavaScript
+1. Bundle all TypeScript/CSS into a single optimized HTML file (9KB)
 2. Commit changes to git
-3. Push to GitHub (auto-deploys via GitHub Pages)
+3. Push to GitHub (auto-deploys via GitHub Actions)
 
 ### Android TV App
 
@@ -215,34 +230,30 @@ Find "Bounce" in your Chromecast app list!
 
 ## Configuration
 
-Key parameters in [src/app.ts](src/app.ts):
+Key parameters in [src/constants.ts](src/constants.ts):
 
 ```typescript
-// Bubble spawning
-const SPAWN_INTERVAL = 500;     // milliseconds between spawns
-const radius = width * (0.02 + Math.random() * 0.03); // 2%-5% of width
+// Game timing
+export const GAME_OVER_CLICK_DELAY = 2000;  // ms before restart allowed
+export const INITIAL_SPAWN_INTERVAL = 500;   // ms between bubble spawns
+export const SPAWN_INTERVAL_DECREASE = 2;    // ms to decrease each spawn
 
 // Colors
-const colors = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
+export const COLORS = ['#ff0000', '#00ff00', '#0000ff']; // red, green, blue
 
-// Selection
-const SELECTION_TIMEOUT = 3000; // ms before auto-deselect
+// Physics
+export const WALL_THICKNESS = 50;            // pixels
 
-// Explosion
-const PARTICLE_COUNT = 33;      // particles per bubble
-const PARTICLE_LIFETIME = 6000; // ms before particles disappear
-
-// Touch detection
-const TOUCH_TOLERANCE = 5;      // pixels
+// Danger zone
+export const DANGER_ZONE_THRESHOLD = 20;     // % from top to trigger warning
 ```
 
 ## NPM Scripts
 
 ### Web Development
-- `npm run build` - Compile TypeScript and copy assets to dist/
-- `npm run watch` - Watch mode for TypeScript compilation
-- `npm run serve` - Serve dist/ locally on port 22222
-- `npm run dev` - Build and serve in one command
+- `npm run build` - Bundle with Vite to create single-file dist/index.html
+- `npm run dev` - Start Vite dev server with hot reload
+- `npm run preview` - Preview production build locally
 - `npm run deploy` - Build and push to GitHub Pages
 
 ### Android Development
@@ -327,14 +338,16 @@ webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
 **Problem**: Changes not appearing after deployment
 ```
-Solution: GitHub Pages may take 1-2 minutes to update
+Solution: GitHub Actions may take 1-2 minutes to build and deploy
 Wait a moment and hard-refresh (Cmd+Shift+R)
+Check Actions tab on GitHub for build status
 ```
 
-**Problem**: TypeScript compilation errors
+**Problem**: Build errors
 ```
-Solution: Clean and rebuild
-rm -rf dist/
+Solution: Clean install and rebuild
+rm -rf dist/ node_modules/
+npm install
 npm run build
 ```
 
@@ -385,28 +398,30 @@ The algorithm accounts for 5px tolerance
 
 ## Performance Optimization
 
-For older/slower devices, edit these values in [src/app.ts](src/app.ts):
+For older/slower devices, edit these values:
 
+**[src/constants.ts](src/constants.ts)**:
 ```typescript
-// Reduce particle count
-const PARTICLE_COUNT = 20; // instead of 33
-
 // Slow down spawn rate
-const SPAWN_INTERVAL = 1000; // instead of 500
+export const INITIAL_SPAWN_INTERVAL = 1000; // instead of 500
+export const SPAWN_INTERVAL_DECREASE = 1;   // instead of 2
+```
 
-// Reduce maximum bubbles
-if (circles.length > 50) {
-    // Remove oldest bubble
-}
+**[src/bubbles.ts](src/bubbles.ts)**:
+```typescript
+// Reduce particle count in removeConnectedCircles()
+for (let i = 0; i < 20; i++) { // instead of 33
 ```
 
 ## Repository Structure
 
-- **`src/`** - TypeScript source code
-- **`dist/`** - Compiled JavaScript (deployed to GitHub Pages)
+- **`src/`** - Modular TypeScript source code
+- **`dist/`** - Single-file bundled output (deployed to GitHub Pages)
 - **`android-app/`** - Android TV wrapper app
+- **`index.html`** - HTML entry point for Vite
+- **`vite.config.ts`** - Vite bundler configuration
 - **`.claude/`** - Claude Code settings for automated permissions
-- **`.github/`** - GitHub Pages workflow configuration
+- **`.github/`** - GitHub Actions workflow for automated deployment
 
 ## No Sensitive Data
 
