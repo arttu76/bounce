@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  },
-  "include": ["src/app.ts", "src/matter-global.d.ts"],
-  "exclude": ["node_modules", "dist", "src/sender.ts"]
-}
