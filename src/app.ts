@@ -23,9 +23,12 @@ const particles: Particle[] = [];
 let selectedCircleIndex: number = -1; // Index of currently selected circle
 
 // Game state
-let longestChain: number = 0; // Longest chain of bubbles removed in one click
+let maxChain: number = 0; // Max chain of bubbles removed in one click (current round)
+let highScore: number = 0; // All-time high score across all rounds
 let isGameOver: boolean = false; // Game over state
 let gameOverStartTime: number = 0; // When game over started
+let isNewHighScore: boolean = false; // Whether current game achieved new high score
+let hasKeyPressedDuringGameOver: boolean = false; // Whether any key was pressed during game over
 const GAME_OVER_CLICK_DELAY = 2000; // Wait 2 seconds before accepting clicks to restart
 
 // Spawning state
@@ -258,9 +261,9 @@ function removeConnectedCircles(clickedCircle: CircleData) {
 
     const toRemove = findConnectedCircles(clickedCircle);
 
-    // Update longest chain
-    if (toRemove.length > longestChain) {
-        longestChain = toRemove.length;
+    // Update max chain for current round
+    if (toRemove.length > maxChain) {
+        maxChain = toRemove.length;
     }
 
     // Remove all connected circles
@@ -474,6 +477,7 @@ canvas.addEventListener('click', (event) => {
 window.addEventListener('keydown', (event) => {
     // Check if game over - restart on any key if enough time has passed
     if (isGameOver) {
+        hasKeyPressedDuringGameOver = true; // Mark that a key was pressed
         const timeSinceGameOver = Date.now() - gameOverStartTime;
         if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
             event.preventDefault();
@@ -542,6 +546,14 @@ function triggerGameOver() {
     if (isGameOver) return; // Already in game over state
     isGameOver = true;
     gameOverStartTime = Date.now();
+
+    // Check if current round achieved new high score
+    if (maxChain > highScore) {
+        highScore = maxChain;
+        isNewHighScore = true;
+    } else {
+        isNewHighScore = false;
+    }
 }
 
 // Restart the game
@@ -561,7 +573,10 @@ function restartGame() {
     // Reset game state
     isGameOver = false;
     selectedCircleIndex = -1;
-    // Don't reset longestChain - keep it as high score
+    maxChain = 0; // Reset max chain for new round
+    isNewHighScore = false;
+    hasKeyPressedDuringGameOver = false;
+    // Keep highScore - it persists across games
 
     // Reset spawning state
     spawnInterval = INITIAL_SPAWN_INTERVAL;
@@ -579,29 +594,46 @@ function drawGameOver() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw "New high score!" if achieved
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (isNewHighScore) {
+        ctx.font = 'bold 48px Arial';
+        ctx.fillStyle = '#FFD700'; // Gold/yellow color
+        ctx.fillText('👑 New high score!', canvas.width / 2, canvas.height / 2 - 150);
+    }
+
     // Draw "GAME OVER" in center
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
     ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
 
-    // Draw "Click to restart" message
+    // Draw max chain achieved this round
+    ctx.font = 'bold 40px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Max chain: ${maxChain}`, canvas.width / 2, canvas.height / 2 + 30);
+
+    // Draw high score
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#aaaaaa';
+    ctx.fillText(`High score: ${highScore}`, canvas.width / 2, canvas.height / 2 + 80);
+
+    // Draw "Click to restart" message only if keypress detected
     const timeSinceGameOver = Date.now() - gameOverStartTime;
-    if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+    if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY && hasKeyPressedDuringGameOver) {
         ctx.font = 'bold 32px Arial';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText('Click to restart', canvas.width / 2, canvas.height / 2 + 50);
+        ctx.fillText('Click to restart', canvas.width / 2, canvas.height / 2 + 150);
     }
 
-    // Draw longest chain in top right corner (same as during game)
+    // Draw max chain in top right corner (same as during game)
     ctx.textAlign = 'center';
     const centerX = canvas.width - 100;
 
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('LONGEST', centerX, 20);
+    ctx.fillText('MAX', centerX, 20);
 
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
@@ -609,7 +641,7 @@ function drawGameOver() {
 
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${longestChain}`, centerX, 100);
+    ctx.fillText(`${maxChain}`, centerX, 100);
 
     ctx.restore();
 }
@@ -687,17 +719,17 @@ function updateAnimations() {
         ctx.stroke();
     }
 
-    // Draw longest chain in top right corner (centered)
+    // Draw max chain in top right corner (centered)
     const ctx = render.context;
     ctx.save();
     ctx.textAlign = 'center';
     const centerX = canvas.width - 100; // Centered in top right area
 
-    // Draw "LONGEST"
+    // Draw "MAX"
     ctx.font = 'bold 32px Arial';
     ctx.fillStyle = '#ffffff';
     ctx.textBaseline = 'top';
-    ctx.fillText('LONGEST', centerX, 20);
+    ctx.fillText('MAX', centerX, 20);
 
     // Draw "CHAIN"
     ctx.font = 'bold 32px Arial';
@@ -707,7 +739,7 @@ function updateAnimations() {
     // Draw chain number in BIG letters
     ctx.font = 'bold 96px Arial';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${longestChain}`, centerX, 100);
+    ctx.fillText(`${maxChain}`, centerX, 100);
 
     ctx.restore();
 
