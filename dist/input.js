@@ -1,5 +1,5 @@
 import { canvas } from './physics';
-import { circles, isGameOver, gameOverStartTime, selectedCircleIndex } from './state';
+import { state } from './state';
 import { GAME_OVER_CLICK_DELAY } from './constants';
 import { restartGame } from './gameOver';
 import { removeConnectedCircles } from './bubbles';
@@ -8,8 +8,8 @@ import { navigateSelection, selectMiddleCircle } from './selection';
 export function setupInputHandlers() {
     canvas.addEventListener('click', (event) => {
         // Check if game over - restart if enough time has passed
-        if (isGameOver) {
-            const timeSinceGameOver = Date.now() - gameOverStartTime;
+        if (state.isGameOver) {
+            const timeSinceGameOver = Date.now() - state.gameOverStartTime;
             if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
                 restartGame();
             }
@@ -19,8 +19,8 @@ export function setupInputHandlers() {
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
         // Check if click hit any circle
-        for (let i = circles.length - 1; i >= 0; i--) {
-            const circleData = circles[i];
+        for (let i = state.circles.length - 1; i >= 0; i--) {
+            const circleData = state.circles[i];
             const dx = circleData.body.position.x - mouseX;
             const dy = circleData.body.position.y - mouseY;
             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -34,8 +34,8 @@ export function setupInputHandlers() {
     // Handle keyboard/remote control input
     window.addEventListener('keydown', (event) => {
         // Check if game over - restart on any key if enough time has passed
-        if (isGameOver) {
-            const timeSinceGameOver = Date.now() - gameOverStartTime;
+        if (state.isGameOver) {
+            const timeSinceGameOver = Date.now() - state.gameOverStartTime;
             if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
                 event.preventDefault();
                 restartGame();
@@ -61,17 +61,17 @@ export function setupInputHandlers() {
                 break;
             case 'Enter': // OK button
                 event.preventDefault();
-                if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
-                    removeConnectedCircles(circles[selectedCircleIndex]);
+                if (state.selectedCircleIndex >= 0 && state.selectedCircleIndex < state.circles.length) {
+                    removeConnectedCircles(state.circles[state.selectedCircleIndex]);
                 }
                 break;
             case ' ': // Space bar (alternative)
                 event.preventDefault();
-                if (selectedCircleIndex === -1) {
+                if (state.selectedCircleIndex === -1) {
                     selectMiddleCircle();
                 }
-                else if (selectedCircleIndex >= 0 && selectedCircleIndex < circles.length) {
-                    removeConnectedCircles(circles[selectedCircleIndex]);
+                else if (state.selectedCircleIndex >= 0 && state.selectedCircleIndex < state.circles.length) {
+                    removeConnectedCircles(state.circles[state.selectedCircleIndex]);
                 }
                 break;
         }

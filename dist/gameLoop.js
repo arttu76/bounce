@@ -1,5 +1,5 @@
 import { engine } from './physics';
-import { isGameOver, particles, selectedCircleIndex, setSelectedCircleIndex, circles } from './state';
+import { state } from './state';
 import { DANGER_ZONE_THRESHOLD } from './constants';
 import { calculateHighestConnectedBubble } from './bubbles';
 import { triggerGameOver } from './gameOver';
@@ -10,7 +10,7 @@ const { World, Body } = Matter;
 export function updateAnimations() {
     const now = Date.now();
     // Check for game over
-    if (isGameOver) {
+    if (state.isGameOver) {
         // Skip rest of updates during game over
         drawGameOver();
         requestAnimationFrame(updateAnimations);
@@ -30,12 +30,12 @@ export function updateAnimations() {
         document.body.classList.remove('danger-zone');
     }
     // Validate selected index
-    if (selectedCircleIndex >= circles.length) {
-        setSelectedCircleIndex(-1);
+    if (state.selectedCircleIndex >= state.circles.length) {
+        state.selectedCircleIndex = -1;
     }
     // Update particle colors, size, and remove old ones
     const particlesToRemove = [];
-    particles.forEach(particle => {
+    state.particles.forEach(particle => {
         const age = now - particle.createdAt;
         const lifeProgress = age / 1000; // 1 second lifetime
         if (lifeProgress >= 1) {
@@ -56,9 +56,9 @@ export function updateAnimations() {
     });
     particlesToRemove.forEach(particle => {
         World.remove(engine.world, particle.body);
-        const index = particles.indexOf(particle);
+        const index = state.particles.indexOf(particle);
         if (index > -1) {
-            particles.splice(index, 1);
+            state.particles.splice(index, 1);
         }
     });
     // Draw selection indicator

@@ -1,15 +1,15 @@
-import { isGameOver, spawnInterval, setSpawnInterval } from './state';
+import { state } from './state';
 import { SPAWN_INTERVAL_DECREASE } from './constants';
 import { addCircle } from './bubbles';
 
 // Add circles periodically with decreasing interval
 export function scheduleNextSpawn() {
     setTimeout(() => {
-        if (!isGameOver) {
+        if (!state.isGameOver) {
             addCircle();
             // Decrease spawn interval (makes spawning faster)
-            setSpawnInterval(Math.max(50, spawnInterval - SPAWN_INTERVAL_DECREASE)); // Min 50ms
+            state.spawnInterval = Math.max(50, state.spawnInterval - SPAWN_INTERVAL_DECREASE); // Min 50ms
         }
         scheduleNextSpawn(); // Schedule next spawn
-    }, spawnInterval);
+    }, state.spawnInterval);
 }
