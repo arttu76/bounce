@@ -44,6 +44,13 @@ export function setupCustomBubbleRenderer(renderer: MatterRender) {
                 const pos = body.position;
                 const radius = body.circleRadius;
                 const baseColor = body.render.fillStyle;
+                const opacity = body.render.opacity !== undefined ? body.render.opacity : 1;
+
+                // Apply opacity if it's less than 1 (for fading particles)
+                if (opacity < 1) {
+                    ctx.save();
+                    ctx.globalAlpha = opacity;
+                }
 
                 // Always render with gradients and highlights (including during death animation)
                 // Create radial gradient for 3D effect - offset but NO white in main gradient
@@ -99,6 +106,11 @@ export function setupCustomBubbleRenderer(renderer: MatterRender) {
                 ctx.fill();
 
                 ctx.restore(); // Restore normal blending
+
+                // Restore opacity if it was modified
+                if (opacity < 1) {
+                    ctx.restore();
+                }
             }
         });
     });
