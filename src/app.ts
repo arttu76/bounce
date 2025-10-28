@@ -1,13 +1,19 @@
 // Main entry point that wires all modules together
 
-import { initPhysics, handleResize } from './physics';
+import { initPhysics, handleResize, getViewportDimensions } from './physics';
 import { setupInputHandlers } from './input';
 import { updateAnimations } from './gameLoop';
 import { scheduleNextSpawn } from './spawning';
 
-// Initialize physics and window resize handling
-initPhysics(window.innerWidth, window.innerHeight);
+// Initialize physics with correct viewport dimensions
+const { width, height } = getViewportDimensions();
+initPhysics(width, height);
+
+// Listen to both window resize and mobile viewport changes
 window.addEventListener('resize', handleResize);
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', handleResize);
+}
 
 // Setup input event handlers
 setupInputHandlers();
