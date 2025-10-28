@@ -8,7 +8,6 @@ export interface CircleData {
     body: MatterBody;
     createdAt: number;
     initialRadius: number;
-    currentRadius: number;
     color: string; // '#ff0000', '#00ff00', or '#0000ff'
 }
 

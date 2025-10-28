@@ -1,8 +1,8 @@
+import Matter from 'matter-js';
 import { engine } from './physics';
 import { state } from './state';
 import { INITIAL_SPAWN_INTERVAL } from './constants';
 
-// @ts-ignore - loaded as global from matter.min.js
 const { World } = Matter;
 
 // Trigger game over
