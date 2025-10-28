@@ -41,7 +41,7 @@ export function initPhysics(width: number, height: number) {
             width: width,
             height: height,
             wireframes: false,
-            background: '#000000'
+            background: 'transparent'
         }
     });
 
