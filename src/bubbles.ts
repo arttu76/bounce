@@ -1,10 +1,10 @@
-import { CircleData } from './types';
-import { COLORS } from './constants';
+import Matter from 'matter-js';
+import { CircleData, Particle } from './types';
+import { COLORS, TOUCH_TOLERANCE, GROUND_TOLERANCE, PARTICLES_PER_BUBBLE, PARTICLE_RADIUS } from './constants';
 import { canvas, engine } from './physics';
 import { state } from './state';
 import { selectNearestCircleToPosition } from './selection';
 
-// @ts-ignore - loaded as global from matter.min.js
 const { World, Bodies, Body } = Matter;
 
 // Add a new falling circle
@@ -40,7 +40,6 @@ export function addCircle() {
         body: circle,
         createdAt: Date.now(),
         initialRadius: radius,
-        currentRadius: radius,
         color: color
     });
 }
@@ -54,7 +53,7 @@ export function areTouching(circle1: CircleData, circle2: CircleData): boolean {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // Two circles touch if distance between centers <= sum of radii (with small tolerance)
-    return distance <= (circle1.currentRadius + circle2.currentRadius + 5); // Add 5px tolerance
+    return distance <= (circle1.initialRadius + circle2.initialRadius + TOUCH_TOLERANCE);
 }
 
 // Find all touching circles using iterative flood-fill
@@ -119,9 +118,9 @@ export function calculateHighestConnectedBubble(): number | null {
 
     // Only check for game over if the lowest bubble is actually touching or very close to the ground
     // A bubble touches the ground when: position.y + radius >= canvas.height
-    // Use a small tolerance (10px) to account for bubbles slightly above ground
-    const bubbleBottomEdge = lowestBubble.body.position.y + lowestBubble.currentRadius;
-    const isGrounded = bubbleBottomEdge >= canvas.height - 10;
+    // Use a small tolerance to account for bubbles slightly above ground
+    const bubbleBottomEdge = lowestBubble.body.position.y + lowestBubble.initialRadius;
+    const isGrounded = bubbleBottomEdge >= canvas.height - GROUND_TOLERANCE;
 
     if (!isGrounded) {
         // Lowest bubble is not on the ground - ignore floating bubbles
@@ -169,16 +168,15 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
     toRemove.forEach(circleData => {
         const explosionCenter = circleData.body.position;
 
-        // Spawn 33 particles with same color as the circle
-        for (let i = 0; i < 33; i++) {
-            const angle = (Math.PI * 2 * i) / 33;
+        // Spawn particles with same color as the circle
+        for (let i = 0; i < PARTICLES_PER_BUBBLE; i++) {
+            const angle = (Math.PI * 2 * i) / PARTICLES_PER_BUBBLE;
             const speed = (5 + Math.random() * 10) / 3;
 
-            const startX = explosionCenter.x + Math.cos(angle) * circleData.currentRadius;
-            const startY = explosionCenter.y + Math.sin(angle) * circleData.currentRadius;
+            const startX = explosionCenter.x + Math.cos(angle) * circleData.initialRadius;
+            const startY = explosionCenter.y + Math.sin(angle) * circleData.initialRadius;
 
-            const particleRadius = 2;
-            const particle = Bodies.circle(startX, startY, particleRadius, {
+            const particle = Bodies.circle(startX, startY, PARTICLE_RADIUS, {
                 restitution: 0.3,
                 friction: 0.05,
                 render: {
@@ -195,7 +193,7 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
             state.particles.push({
                 body: particle,
                 createdAt: Date.now(),
-                initialRadius: particleRadius
+                initialRadius: PARTICLE_RADIUS
             });
         }
 
@@ -203,13 +201,9 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
         World.remove(engine.world, circleData.body);
     });
 
-    // Remove from circles array
-    toRemove.forEach(circleData => {
-        const index = state.circles.indexOf(circleData);
-        if (index > -1) {
-            state.circles.splice(index, 1);
-        }
-    });
+    // Remove from circles array using Set for O(n) performance
+    const toRemoveSet = new Set(toRemove);
+    state.circles = state.circles.filter(circle => !toRemoveSet.has(circle));
 
     // Auto-select nearest bubble to where the popped bubble was
     selectNearestCircleToPosition(clickedPosition.x, clickedPosition.y);

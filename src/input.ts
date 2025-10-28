@@ -28,7 +28,7 @@ export function setupInputHandlers() {
             const dy = circleData.body.position.y - mouseY;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= circleData.currentRadius) {
+            if (distance <= circleData.initialRadius) {
                 // Explode immediately on click
                 removeConnectedCircles(circleData);
                 break; // Only explode one circle per click

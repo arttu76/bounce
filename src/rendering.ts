@@ -1,6 +1,22 @@
 import { render, canvas } from './physics';
 import { state } from './state';
-import { GAME_OVER_CLICK_DELAY } from './constants';
+import { GAME_OVER_CLICK_DELAY, MAX_CHAIN_UI_OFFSET, SELECTION_RING_OFFSET } from './constants';
+
+// Helper function to draw the MAX CHAIN display
+function renderMaxChainText(ctx: CanvasRenderingContext2D, centerX: number) {
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = 'top';
+    ctx.fillText('MAX', centerX, 140);
+
+    ctx.font = 'bold 32px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('CHAIN', centerX, 180);
+
+    ctx.font = 'bold 96px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`${state.maxChain}`, centerX, 220);
+}
 
 // Draw game over screen
 export function drawGameOver() {
@@ -45,20 +61,8 @@ export function drawGameOver() {
 
     // Draw max chain in top right corner (same as during game)
     ctx.textAlign = 'center';
-    const centerX = canvas.width - 200;
-
-    ctx.font = 'bold 32px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 140);
-
-    ctx.font = 'bold 32px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 180);
-
-    ctx.font = 'bold 96px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${state.maxChain}`, centerX, 220);
+    const centerX = canvas.width - MAX_CHAIN_UI_OFFSET;
+    renderMaxChainText(ctx, centerX);
 
     ctx.restore();
 }
@@ -69,7 +73,7 @@ export function drawSelectionIndicator() {
         const selectedCircle = state.circles[state.selectedCircleIndex];
         const ctx = render.context;
         const pos = selectedCircle.body.position;
-        const selectionRadius = selectedCircle.currentRadius + 15; // Offset from circle edge
+        const selectionRadius = selectedCircle.initialRadius + SELECTION_RING_OFFSET;
 
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, selectionRadius, 0, Math.PI * 2);
@@ -84,23 +88,7 @@ export function drawMaxChainDisplay() {
     const ctx = render.context;
     ctx.save();
     ctx.textAlign = 'center';
-    const centerX = canvas.width - 200; // Centered in top right area
-
-    // Draw "MAX"
-    ctx.font = 'bold 32px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.textBaseline = 'top';
-    ctx.fillText('MAX', centerX, 140);
-
-    // Draw "CHAIN"
-    ctx.font = 'bold 32px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText('CHAIN', centerX, 180);
-
-    // Draw chain number in BIG letters
-    ctx.font = 'bold 96px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(`${state.maxChain}`, centerX, 220);
-
+    const centerX = canvas.width - MAX_CHAIN_UI_OFFSET;
+    renderMaxChainText(ctx, centerX);
     ctx.restore();
 }

@@ -1,3 +1,4 @@
+import Matter from 'matter-js';
 import { Particle } from './types';
 import { engine } from './physics';
 import { state } from './state';
@@ -6,7 +7,6 @@ import { calculateHighestConnectedBubble } from './bubbles';
 import { triggerGameOver } from './gameOver';
 import { drawGameOver, drawSelectionIndicator, drawMaxChainDisplay } from './rendering';
 
-// @ts-ignore - loaded as global from matter.min.js
 const { World, Body } = Matter;
 
 // Main game loop
@@ -49,28 +49,21 @@ export function updateAnimations() {
         if (lifeProgress >= 1) {
             particlesToRemove.push(particle);
         } else {
-            // Fade opacity from 1 to 0
-            const opacity = 1 - lifeProgress;
-            particle.body.render.opacity = opacity;
-
-            // Shrink particle as it ages (from 1.0 to 0.1 of initial size)
-            const targetScale = 1 - (lifeProgress * 0.9); // Scale from 1.0 to 0.1
-            const currentRadius = particle.initialRadius * targetScale;
-            const scaleFactor = currentRadius / (particle.body.circleRadius || particle.initialRadius);
-
-            if (scaleFactor > 0.01) { // Prevent scaling to zero
-                Body.scale(particle.body, scaleFactor, scaleFactor);
-            }
+            // Fade opacity from 1 to 0 (performance: only update opacity, not scale)
+            particle.body.render.opacity = 1 - lifeProgress;
         }
     });
 
+    // Remove old particles
     particlesToRemove.forEach(particle => {
         World.remove(engine.world, particle.body);
-        const index = state.particles.indexOf(particle);
-        if (index > -1) {
-            state.particles.splice(index, 1);
-        }
     });
+
+    // Remove from particles array using Set for O(n) performance
+    if (particlesToRemove.length > 0) {
+        const toRemoveSet = new Set(particlesToRemove);
+        state.particles = state.particles.filter(particle => !toRemoveSet.has(particle));
+    }
 
     // Draw selection indicator
     drawSelectionIndicator();
