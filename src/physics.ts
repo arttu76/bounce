@@ -73,9 +73,24 @@ export function initPhysics(width: number, height: number) {
     }
 }
 
+// Get actual viewport dimensions accounting for mobile browser UI
+export function getViewportDimensions() {
+    // Use visualViewport API on mobile for accurate dimensions
+    if (window.visualViewport) {
+        return {
+            width: window.visualViewport.width,
+            height: window.visualViewport.height
+        };
+    }
+    // Fallback for desktop/Chromecast
+    return {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+}
+
 // Handle window resize
 export function handleResize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const { width, height } = getViewportDimensions();
     initPhysics(width, height);
 }
