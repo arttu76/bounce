@@ -1,11 +1,11 @@
+import Matter from 'matter-js';
 import { MatterRender, MatterBody, MatterRunner } from './types';
 import { WALL_THICKNESS } from './constants';
 
 // Get canvas
 export const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
-// Matter.js is loaded globally from the script tag
-// @ts-ignore - loaded as global from matter.min.js
+// Import Matter.js components
 const { Engine, Render, World, Bodies, Runner } = Matter;
 
 // Create engine
