@@ -2,8 +2,9 @@ import { canvas } from './physics';
 import { state } from './state';
 import { GAME_OVER_CLICK_DELAY } from './constants';
 import { restartGame } from './gameOver';
-import { removeConnectedCircles } from './bubbles';
+import { removeConnectedCircles, addCircle } from './bubbles';
 import { navigateSelection, selectMiddleCircle } from './selection';
+import { InputMethod } from './types';
 
 // Convert screen coordinates to canvas coordinates
 // Accounts for canvas display size vs internal resolution
@@ -23,6 +24,10 @@ function getCanvasCoordinates(clientX: number, clientY: number): { x: number, y:
 
 // Handle click/touch on canvas
 function handleCanvasInteraction(clientX: number, clientY: number) {
+    // Mark as mouse input method
+    state.lastInputMethod = InputMethod.MOUSE;
+    state.selectedCircleIndex = -1; // Deselect when using mouse
+
     // Check if game over - restart if enough time has passed
     if (state.isGameOver) {
         const timeSinceGameOver = Date.now() - state.gameOverStartTime;
@@ -80,32 +85,46 @@ export function setupInputHandlers() {
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 navigateSelection('up');
                 break;
             case 'ArrowDown':
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 navigateSelection('down');
                 break;
             case 'ArrowLeft':
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 navigateSelection('left');
                 break;
             case 'ArrowRight':
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 navigateSelection('right');
                 break;
             case 'Enter': // OK button
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 if (state.selectedCircleIndex >= 0 && state.selectedCircleIndex < state.circles.length) {
                     removeConnectedCircles(state.circles[state.selectedCircleIndex]);
                 }
                 break;
             case ' ': // Space bar (alternative)
                 event.preventDefault();
+                state.lastInputMethod = InputMethod.KEYBOARD; // Mark as keyboard input
                 if (state.selectedCircleIndex === -1) {
                     selectMiddleCircle();
                 } else if (state.selectedCircleIndex >= 0 && state.selectedCircleIndex < state.circles.length) {
                     removeConnectedCircles(state.circles[state.selectedCircleIndex]);
+                }
+                break;
+            case 'p':
+            case 'P':
+                // Testing: spawn 20 circles immediately
+                event.preventDefault();
+                for (let i = 0; i < 20; i++) {
+                    addCircle();
                 }
                 break;
         }

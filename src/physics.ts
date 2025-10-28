@@ -1,6 +1,7 @@
 import Matter from 'matter-js';
 import { MatterRender, MatterBody, MatterRunner } from './types';
 import { WALL_THICKNESS } from './constants';
+import { setupCustomBubbleRenderer } from './rendering';
 
 // Get canvas
 export const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -63,12 +64,20 @@ export function initPhysics(width: number, height: number) {
 
     World.add(engine.world, [ground, wallLeft, wallRight]);
 
+    // Setup custom bubble rendering with gradients and highlights
+    setupCustomBubbleRenderer(render);
+
     // Run the renderer
     Render.run(render);
 
-    // Start runner if not already running
+    // Start runner with fixed timestep if not already running
     if (!runner) {
-        runner = Runner.create();
+        runner = Runner.create({
+            // Fixed timestep: 60 FPS physics regardless of display refresh rate
+            // This ensures consistent physics simulation speed across all machines
+            delta: 1000 / 60, // 16.67ms per physics update (60 FPS)
+            isFixed: true
+        });
         Runner.run(runner, engine);
     }
 }

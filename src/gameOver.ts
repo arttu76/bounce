@@ -1,13 +1,17 @@
 import Matter from 'matter-js';
 import { engine } from './physics';
 import { state } from './state';
-import { INITIAL_SPAWN_INTERVAL } from './constants';
+import { INITIAL_SPAWN_INTERVAL, DEATH_ANIMATION_DURATION } from './constants';
+import { setupDeathAnimation } from './bubbles';
 
 const { World } = Matter;
 
 // Trigger game over
 export function triggerGameOver() {
     if (state.isGameOver) return; // Already in game over state
+
+    // Setup the cascading death animation (2 second duration)
+    setupDeathAnimation();
 
     // Remove danger zone animation when game is over
     document.body.classList.remove('danger-zone');
@@ -19,9 +23,10 @@ export function triggerGameOver() {
     }
 
     // Update state
+    // Delay gameOverStartTime to allow death animation to complete
     Object.assign(state, {
         isGameOver: true,
-        gameOverStartTime: Date.now(),
+        gameOverStartTime: Date.now() + DEATH_ANIMATION_DURATION,
         isNewHighScore
     });
 }
@@ -39,6 +44,9 @@ export function restartGame() {
         World.remove(engine.world, particle.body);
     });
     state.particles.length = 0;
+
+    // Remove all shockwaves
+    state.shockwaves.length = 0;
 
     // Remove danger zone animation
     document.body.classList.remove('danger-zone');

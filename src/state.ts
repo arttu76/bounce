@@ -1,4 +1,4 @@
-import { CircleData, Particle } from './types';
+import { CircleData, Particle, Shockwave, InputMethod } from './types';
 import { INITIAL_SPAWN_INTERVAL } from './constants';
 
 // Game state object
@@ -6,9 +6,11 @@ export const state = {
     // Collections
     circles: [] as CircleData[],
     particles: [] as Particle[],
+    shockwaves: [] as Shockwave[],
 
     // Selection
     selectedCircleIndex: -1,
+    lastInputMethod: InputMethod.MOUSE, // Track input method for showing selection indicator
 
     // Score tracking
     maxChain: 0,
