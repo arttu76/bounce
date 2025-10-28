@@ -114,12 +114,14 @@ export function calculateHighestConnectedBubble(): number | null {
         }
     });
 
+    // Type guard: lowestBubble is definitely not null here
     if (!lowestBubble) return null;
+    const bubble: CircleData = lowestBubble;
 
     // Only check for game over if the lowest bubble is actually touching or very close to the ground
     // A bubble touches the ground when: position.y + radius >= canvas.height
     // Use a small tolerance to account for bubbles slightly above ground
-    const bubbleBottomEdge = lowestBubble.body.position.y + lowestBubble.initialRadius;
+    const bubbleBottomEdge = bubble.body.position.y + bubble.initialRadius;
     const isGrounded = bubbleBottomEdge >= canvas.height - GROUND_TOLERANCE;
 
     if (!isGrounded) {
@@ -128,7 +130,7 @@ export function calculateHighestConnectedBubble(): number | null {
     }
 
     // Find all connected circles (regardless of color)
-    const connected = findAllConnectedCircles(lowestBubble);
+    const connected = findAllConnectedCircles(bubble);
 
     if (connected.length === 0) return null;
 
