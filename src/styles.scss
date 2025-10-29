@@ -1,0 +1,136 @@
+// Variables
+$color-black: black;
+$color-dark-red: #660000;
+$color-white: white;
+$color-gold: #FFD700;
+$color-gray: #aaaaaa;
+
+// Global reset
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+// Body styles
+body {
+    width: 100vw;
+    height: 100vh; // Fallback for older browsers
+    // Use dynamic viewport height on mobile to account for browser UI
+    // Falls back to 100vh on browsers that don't support dvh
+    height: 100dvh;
+    background-color: $color-black;
+    overflow: hidden;
+    position: fixed; // Prevent mobile scrolling
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    // Prevent mobile touch behaviors
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+    // Danger zone animation
+    &.danger-zone {
+        animation: pulseRed 2s ease-in-out infinite;
+    }
+}
+
+// Keyframes
+@keyframes pulseRed {
+    0% {
+        background-color: $color-black;
+    }
+    50% {
+        background-color: $color-dark-red;
+    }
+    100% {
+        background-color: $color-black;
+    }
+}
+
+// Canvas
+#canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    // Prevent mobile touch behaviors
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+// UI Overlay - Max Chain Display
+#max-chain-display {
+    position: fixed;
+    top: 140px;
+    right: 60px;
+    text-align: center;
+    color: $color-white;
+    font-family: Arial, sans-serif;
+    pointer-events: none;
+    z-index: 10;
+
+    .max-label,
+    .chain-label {
+        font-size: 32px;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+
+    .chain-value {
+        font-size: 96px;
+        font-weight: bold;
+        line-height: 1;
+    }
+}
+
+// Game Over Screen
+#game-over-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: $color-white;
+    font-family: Arial, sans-serif;
+    z-index: 100;
+
+    #new-high-score {
+        font-size: 48px;
+        font-weight: bold;
+        color: $color-gold;
+        margin-bottom: 30px;
+    }
+
+    .game-over-title {
+        font-size: 96px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .max-chain-text {
+        font-size: 40px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .high-score-text {
+        font-size: 32px;
+        font-weight: bold;
+        color: $color-gray;
+        margin-bottom: 40px;
+    }
+
+    .restart-text {
+        font-size: 32px;
+        font-weight: bold;
+    }
+}

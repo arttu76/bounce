@@ -4,6 +4,7 @@ import { COLORS, TOUCH_TOLERANCE, GROUND_TOLERANCE, PARTICLES_PER_BUBBLE, PARTIC
 import { canvas, engine } from './physics';
 import { state } from './state';
 import { selectNearestCircleToPosition } from './selection';
+import { updateMaxChainDisplay } from './ui';
 
 const { World, Bodies, Body } = Matter;
 
@@ -250,6 +251,7 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
     // Update max chain for current round
     if (toRemove.length > state.maxChain) {
         state.maxChain = toRemove.length;
+        updateMaxChainDisplay();
     }
 
     // Remove all connected circles

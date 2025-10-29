@@ -115,16 +115,12 @@ export function setupCustomBubbleRenderer(renderer: MatterRender) {
             }
         });
 
-        // After rendering bubbles, draw all UI elements
-        // Draw shockwaves
+        // After rendering bubbles, draw shockwaves and selection indicator
         drawShockwaves();
 
-        // Draw game UI based on state
-        if (state.isGameOver) {
-            drawGameOver();
-        } else {
+        // Only draw selection indicator on canvas (game over and max chain are HTML now)
+        if (!state.isGameOver) {
             drawSelectionIndicator();
-            drawMaxChainDisplay();
         }
     });
 }

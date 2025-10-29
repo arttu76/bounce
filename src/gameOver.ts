@@ -3,6 +3,7 @@ import { engine } from './physics';
 import { state } from './state';
 import { INITIAL_SPAWN_INTERVAL, DEATH_ANIMATION_DURATION } from './constants';
 import { setupDeathAnimation } from './bubbles';
+import { showGameOver, hideGameOver, updateMaxChainDisplay } from './ui';
 
 const { World } = Matter;
 
@@ -29,6 +30,11 @@ export function triggerGameOver() {
         gameOverStartTime: Date.now() + DEATH_ANIMATION_DURATION,
         isNewHighScore
     });
+
+    // Show game over UI after death animation completes
+    setTimeout(() => {
+        showGameOver();
+    }, DEATH_ANIMATION_DURATION);
 }
 
 // Restart the game
@@ -51,6 +57,9 @@ export function restartGame() {
     // Remove danger zone animation
     document.body.classList.remove('danger-zone');
 
+    // Hide game over UI
+    hideGameOver();
+
     // Reset game state
     Object.assign(state, {
         isGameOver: false,
@@ -61,6 +70,9 @@ export function restartGame() {
         nextColorIndex: 0
     });
     // Note: highScore persists across games
+
+    // Update UI to reflect reset
+    updateMaxChainDisplay();
 
     // Don't spawn initial circles - let them accumulate naturally from the interval
 }

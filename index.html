@@ -7,10 +7,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Bounce - Bubble Popping Game</title>
-    <link rel="stylesheet" href="/src/styles.css">
+    <link rel="stylesheet" href="/src/styles.scss">
 </head>
 <body>
     <canvas id="canvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="max-chain-display">
+        <div class="max-label">MAX</div>
+        <div class="chain-label">CHAIN</div>
+        <div class="chain-value">0</div>
+    </div>
+
+    <div id="game-over-screen" style="display: none;">
+        <div id="new-high-score" style="display: none;">👑 New high score!</div>
+        <div class="game-over-title">GAME OVER</div>
+        <div class="max-chain-text"></div>
+        <div class="high-score-text"></div>
+        <div class="restart-text" style="display: none;">Click to restart</div>
+    </div>
+
     <script type="module" src="/src/app.ts"></script>
 </body>
 </html>

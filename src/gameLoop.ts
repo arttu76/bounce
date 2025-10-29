@@ -2,9 +2,10 @@ import Matter from 'matter-js';
 import { Particle } from './types';
 import { engine } from './physics';
 import { state } from './state';
-import { DANGER_ZONE_THRESHOLD, DEATH_FADE_TO_WHITE_DURATION, DEATH_FADE_FROM_WHITE_DURATION, DEATH_FADE_TOTAL_DURATION, SHOCKWAVE_DURATION } from './constants';
+import { DANGER_ZONE_THRESHOLD, DEATH_FADE_TO_WHITE_DURATION, DEATH_FADE_FROM_WHITE_DURATION, DEATH_FADE_TOTAL_DURATION, SHOCKWAVE_DURATION, GAME_OVER_CLICK_DELAY } from './constants';
 import { calculateHighestConnectedBubble } from './bubbles';
 import { triggerGameOver } from './gameOver';
+import { updateMaxChainDisplay, showRestartText } from './ui';
 
 const { World, Body } = Matter;
 
@@ -96,7 +97,12 @@ export function updateAnimations() {
 
     // Check for game over
     if (state.isGameOver) {
-        // Continue animation loop (UI is drawn in afterRender event)
+        // Show restart text after delay
+        const timeSinceGameOver = now - state.gameOverStartTime;
+        if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+            showRestartText();
+        }
+        // Continue animation loop
         requestAnimationFrame(updateAnimations);
         return;
     }
@@ -120,6 +126,6 @@ export function updateAnimations() {
         state.selectedCircleIndex = -1;
     }
 
-    // UI drawing is now handled in the afterRender event in rendering.ts
+    // Update HTML UI elements (max chain display updated when it changes in bubbles.ts)
     requestAnimationFrame(updateAnimations);
 }
