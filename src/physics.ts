@@ -32,7 +32,6 @@ export function initPhysics(width: number, height: number) {
     // Create renderer
     if (render) {
         Render.stop(render);
-        render.canvas.remove();
     }
 
     render = Render.create({
