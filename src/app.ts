@@ -11,7 +11,7 @@ initPhysics(width, height);
 
 // Listen to both window resize and mobile viewport changes
 window.addEventListener('resize', handleResize);
-if (window.visualViewport) {
+if (typeof window !== 'undefined' && window.visualViewport) {
     window.visualViewport.addEventListener('resize', handleResize);
 }
 

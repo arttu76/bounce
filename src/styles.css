@@ -6,8 +6,9 @@
 
 body {
     width: 100vw;
-    height: 100vh;
+    height: 100vh; /* Fallback for older browsers */
     /* Use dynamic viewport height on mobile to account for browser UI */
+    /* Falls back to 100vh on browsers that don't support dvh */
     height: 100dvh;
     background-color: black;
     overflow: hidden;
@@ -20,8 +21,6 @@ body {
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
-    /* Safe area padding for notched devices */
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 body.danger-zone {
