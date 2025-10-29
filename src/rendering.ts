@@ -37,6 +37,7 @@ export function setupCustomBubbleRenderer(renderer: MatterRender) {
         const ctx = renderer.context;
         const bodies = Matter.Composite.allBodies(engine.world);
 
+        // First, render all bubbles
         bodies.forEach(body => {
             // Only render circles (bubbles and particles), not rectangles (walls)
             // Check for circleRadius to identify circles, and fillStyle for the color
@@ -113,6 +114,18 @@ export function setupCustomBubbleRenderer(renderer: MatterRender) {
                 }
             }
         });
+
+        // After rendering bubbles, draw all UI elements
+        // Draw shockwaves
+        drawShockwaves();
+
+        // Draw game UI based on state
+        if (state.isGameOver) {
+            drawGameOver();
+        } else {
+            drawSelectionIndicator();
+            drawMaxChainDisplay();
+        }
     });
 }
 

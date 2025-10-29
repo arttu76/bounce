@@ -5,7 +5,6 @@ import { state } from './state';
 import { DANGER_ZONE_THRESHOLD, DEATH_FADE_TO_WHITE_DURATION, DEATH_FADE_FROM_WHITE_DURATION, DEATH_FADE_TOTAL_DURATION, SHOCKWAVE_DURATION } from './constants';
 import { calculateHighestConnectedBubble } from './bubbles';
 import { triggerGameOver } from './gameOver';
-import { drawGameOver, drawSelectionIndicator, drawMaxChainDisplay, drawShockwaves } from './rendering';
 
 const { World, Body } = Matter;
 
@@ -97,8 +96,7 @@ export function updateAnimations() {
 
     // Check for game over
     if (state.isGameOver) {
-        // Continue to show game over screen
-        drawGameOver();
+        // Continue animation loop (UI is drawn in afterRender event)
         requestAnimationFrame(updateAnimations);
         return;
     }
@@ -122,14 +120,6 @@ export function updateAnimations() {
         state.selectedCircleIndex = -1;
     }
 
-    // Draw selection indicator
-    drawSelectionIndicator();
-
-    // Draw max chain display
-    drawMaxChainDisplay();
-
-    // Draw shockwave effects
-    drawShockwaves();
-
+    // UI drawing is now handled in the afterRender event in rendering.ts
     requestAnimationFrame(updateAnimations);
 }
