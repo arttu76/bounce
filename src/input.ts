@@ -54,6 +54,16 @@ function handleCanvasInteraction(clientX: number, clientY: number) {
     }
 }
 
+// Handle clicks on game over screen
+function handleGameOverClick() {
+    if (state.isGameOver) {
+        const timeSinceGameOver = Date.now() - state.gameOverStartTime;
+        if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
+            restartGame();
+        }
+    }
+}
+
 // Handle mouse/touch clicks on circles
 export function setupInputHandlers() {
     // Mouse click handler (desktop)
@@ -69,6 +79,16 @@ export function setupInputHandlers() {
             handleCanvasInteraction(touch.clientX, touch.clientY);
         }
     });
+
+    // Game over screen click handler
+    const gameOverScreen = document.getElementById('game-over-screen');
+    if (gameOverScreen) {
+        gameOverScreen.addEventListener('click', handleGameOverClick);
+        gameOverScreen.addEventListener('touchstart', (event) => {
+            event.preventDefault();
+            handleGameOverClick();
+        });
+    }
 
     // Handle keyboard/remote control input
     window.addEventListener('keydown', (event) => {

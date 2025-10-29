@@ -27,8 +27,9 @@ body {
     right: 0;
     bottom: 0;
 
-    // Prevent mobile touch behaviors
+    // Prevent mobile touch behaviors and disable zoom
     touch-action: none;
+    -ms-touch-action: none;
     -webkit-user-select: none;
     user-select: none;
 
