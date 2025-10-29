@@ -106,9 +106,6 @@ export function getViewportDimensions() {
         height = window.innerHeight;
     }
 
-    // Log for debugging (helps diagnose blank screen issues)
-    console.log('Viewport dimensions:', width, 'x', height);
-
     return { width, height };
 }
 
