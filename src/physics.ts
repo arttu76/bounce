@@ -84,29 +84,32 @@ export function initPhysics(width: number, height: number) {
 
 // Get actual viewport dimensions accounting for mobile browser UI
 export function getViewportDimensions() {
+    let width = 0;
+    let height = 0;
+
     // First check if canvas already has a display size (after layout)
     // This ensures canvas internal resolution matches its actual display size
     const rect = canvas.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
-        return {
-            width: Math.round(rect.width),
-            height: Math.round(rect.height)
-        };
+        width = Math.round(rect.width);
+        height = Math.round(rect.height);
     }
-
     // Fallback to viewport API for initial sizing before layout
     // Use visualViewport API on mobile for accurate dimensions
-    if (typeof window !== 'undefined' && window.visualViewport) {
-        return {
-            width: window.visualViewport.width,
-            height: window.visualViewport.height
-        };
+    else if (typeof window !== 'undefined' && window.visualViewport) {
+        width = window.visualViewport.width;
+        height = window.visualViewport.height;
     }
     // Fallback for desktop/Chromecast
-    return {
-        width: window.innerWidth,
-        height: window.innerHeight
-    };
+    else {
+        width = window.innerWidth;
+        height = window.innerHeight;
+    }
+
+    // Log for debugging (helps diagnose blank screen issues)
+    console.log('Viewport dimensions:', width, 'x', height);
+
+    return { width, height };
 }
 
 // Handle window resize
