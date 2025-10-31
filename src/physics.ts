@@ -81,6 +81,14 @@ export function initPhysics(width: number, height: number) {
     }
 }
 
+// Detect if device is mobile for performance optimizations
+function isMobileDevice(): boolean {
+    // Check for touch support and small screen
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isSmallScreen = window.innerWidth < 1024; // Tablets and phones
+    return hasTouch && isSmallScreen;
+}
+
 // Get actual viewport dimensions accounting for mobile browser UI
 export function getViewportDimensions() {
     let width = 0;
@@ -103,6 +111,13 @@ export function getViewportDimensions() {
     else {
         width = window.innerWidth;
         height = window.innerHeight;
+    }
+
+    // On mobile: render at 0.5x resolution (2x zoom, 1/4 pixels) for better performance
+    // Canvas will be scaled up with CSS to fill the screen
+    if (isMobileDevice()) {
+        width = Math.round(width * 0.5);
+        height = Math.round(height * 0.5);
     }
 
     return { width, height };

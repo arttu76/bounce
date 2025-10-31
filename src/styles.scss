@@ -61,6 +61,11 @@ body {
     // Prevent mobile touch behaviors
     touch-action: none;
     -webkit-tap-highlight-color: transparent;
+
+    // On mobile: canvas renders at 0.5x resolution, CSS scales it up 2x
+    // This gives better performance (1/4 pixels) while maintaining full screen coverage
+    // Use smooth scaling to maintain gradient quality
+    image-rendering: auto;
 }
 
 // UI Overlay - Max Chain Display
@@ -133,5 +138,45 @@ body {
     .restart-text {
         font-size: 32px;
         font-weight: bold;
+    }
+}
+
+// Mobile optimizations for smaller screens
+@media (max-width: 1023px) {
+    // Scale down UI text on mobile for better proportions with 2x zoomed canvas
+    #max-chain-display {
+        top: 70px;
+        right: 30px;
+
+        .max-label,
+        .chain-label {
+            font-size: 24px;
+        }
+
+        .chain-value {
+            font-size: 72px;
+        }
+    }
+
+    #game-over-screen {
+        #new-high-score {
+            font-size: 36px;
+        }
+
+        .game-over-title {
+            font-size: 64px;
+        }
+
+        .max-chain-text {
+            font-size: 32px;
+        }
+
+        .high-score-text {
+            font-size: 24px;
+        }
+
+        .restart-text {
+            font-size: 24px;
+        }
     }
 }
