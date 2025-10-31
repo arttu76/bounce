@@ -18,6 +18,11 @@ export interface CircleData {
     deathAnimated?: boolean; // tracks if bubble has started the death animation
     deathStartTime?: number; // when the bubble's death animation should start
     deathWave?: number; // BFS distance from highest bubble (for debugging)
+
+    // Performance caching
+    cachedSprite?: HTMLCanvasElement | OffscreenCanvas; // Pre-rendered bubble sprite
+    cachedDarkenedColor?: string; // Pre-calculated darkened color for gradients
+    cachedBrightness?: number; // Pre-calculated brightness value
 }
 
 export interface Particle {

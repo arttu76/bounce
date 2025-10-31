@@ -5,8 +5,53 @@ import { canvas, engine } from './physics';
 import { state } from './state';
 import { selectNearestCircleToPosition } from './selection';
 import { updateMaxChainDisplay } from './ui';
+import { getColorBrightness, darkenColor, createBubbleSprite } from './rendering';
 
 const { World, Bodies, Body } = Matter;
+
+// Particle pooling functions for performance
+function getParticleFromPool(x: number, y: number, color: string): Particle {
+    let particle: Particle;
+
+    if (state.particlePool.length > 0) {
+        // Reuse particle from pool
+        particle = state.particlePool.pop()!;
+        Body.setPosition(particle.body, { x, y });
+        Body.setVelocity(particle.body, { x: 0, y: 0 });
+        particle.body.render.fillStyle = color;
+        particle.body.render.opacity = 1;
+        particle.createdAt = state.currentTime;
+        World.add(engine.world, particle.body);
+    } else {
+        // Create new particle
+        const body = Bodies.circle(x, y, PARTICLE_RADIUS, {
+            restitution: 0.3,
+            friction: 0.05,
+            render: {
+                fillStyle: color,
+                visible: false
+            }
+        });
+        World.add(engine.world, body);
+        particle = {
+            body: body,
+            createdAt: state.currentTime,
+            initialRadius: PARTICLE_RADIUS
+        };
+    }
+
+    return particle;
+}
+
+export function returnParticleToPool(particle: Particle) {
+    // Remove from physics world but keep the body for reuse
+    World.remove(engine.world, particle.body);
+
+    // Only keep reasonable pool size to avoid memory bloat
+    if (state.particlePool.length < PARTICLES_PER_BUBBLE * 10) {
+        state.particlePool.push(particle);
+    }
+}
 
 // Add a new falling circle
 export function addCircle() {
@@ -25,6 +70,14 @@ export function addCircle() {
     const color = COLORS[state.nextColorIndex];
     state.nextColorIndex = (state.nextColorIndex + 1) % COLORS.length;
 
+    // Pre-calculate color properties for performance
+    const brightness = getColorBrightness(color);
+    const darkenAmount = brightness > 200 ? 0.2 : 0.7;
+    const darkenedColor = darkenColor(color, darkenAmount);
+
+    // Create cached sprite for this bubble
+    const cachedSprite = createBubbleSprite(radius, color, darkenedColor, brightness);
+
     // Create circle body with random color (no border)
     // visible: false hides the default Matter.js rendering, our custom renderer will draw it
     const circle = Bodies.circle(x, y, radius, {
@@ -38,12 +91,15 @@ export function addCircle() {
 
     World.add(engine.world, circle);
 
-    // Track this circle
+    // Track this circle with cached data
     state.circles.push({
         body: circle,
-        createdAt: Date.now(),
+        createdAt: state.currentTime,
         initialRadius: radius,
-        color: color
+        color: color,
+        cachedSprite: cachedSprite,
+        cachedDarkenedColor: darkenedColor,
+        cachedBrightness: brightness
     });
 }
 
@@ -221,7 +277,7 @@ export function setupDeathAnimation(): void {
     });
 
     // Calculate timing based on distance
-    const currentTime = Date.now();
+    const currentTime = state.currentTime;
     const availableTime = DEATH_ANIMATION_DURATION - DEATH_FADE_TOTAL_DURATION;
 
     // Assign death start times to all bubbles based on their distance
@@ -263,10 +319,10 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
             x: explosionCenter.x,
             y: explosionCenter.y,
             radius: circleData.initialRadius,
-            createdAt: Date.now()
+            createdAt: state.currentTime
         });
 
-        // Spawn particles with same color as the circle
+        // Spawn particles with same color as the circle using pooling
         for (let i = 0; i < PARTICLES_PER_BUBBLE; i++) {
             const angle = (Math.PI * 2 * i) / PARTICLES_PER_BUBBLE;
             const speed = (5 + Math.random() * 10) / 3;
@@ -274,26 +330,15 @@ export function removeConnectedCircles(clickedCircle: CircleData) {
             const startX = explosionCenter.x + Math.cos(angle) * circleData.initialRadius;
             const startY = explosionCenter.y + Math.sin(angle) * circleData.initialRadius;
 
-            const particle = Bodies.circle(startX, startY, PARTICLE_RADIUS, {
-                restitution: 0.3,
-                friction: 0.05,
-                render: {
-                    fillStyle: circleData.color,
-                    visible: false
-                }
-            });
+            // Get particle from pool (reuses existing particles for better performance)
+            const particle = getParticleFromPool(startX, startY, circleData.color);
 
-            Body.setVelocity(particle, {
+            Body.setVelocity(particle.body, {
                 x: Math.cos(angle) * speed,
                 y: Math.sin(angle) * speed
             });
 
-            World.add(engine.world, particle);
-            state.particles.push({
-                body: particle,
-                createdAt: Date.now(),
-                initialRadius: PARTICLE_RADIUS
-            });
+            state.particles.push(particle);
         }
 
         // Remove the circle from physics world

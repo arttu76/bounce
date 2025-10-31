@@ -23,7 +23,13 @@ export const state = {
 
     // Spawning state
     nextColorIndex: 0,
-    spawnInterval: INITIAL_SPAWN_INTERVAL
+    spawnInterval: INITIAL_SPAWN_INTERVAL,
+
+    // Performance tracking
+    currentTime: Date.now(), // Updated by requestAnimationFrame for consistent timing
+
+    // Particle pooling
+    particlePool: [] as Particle[]
 };
 
 // Helper function to update state (optional, for convenience)

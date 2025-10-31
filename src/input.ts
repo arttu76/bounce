@@ -30,7 +30,7 @@ function handleCanvasInteraction(clientX: number, clientY: number) {
 
     // Check if game over - restart if enough time has passed
     if (state.isGameOver) {
-        const timeSinceGameOver = Date.now() - state.gameOverStartTime;
+        const timeSinceGameOver = state.currentTime - state.gameOverStartTime;
         if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
             restartGame();
         }
@@ -57,7 +57,7 @@ function handleCanvasInteraction(clientX: number, clientY: number) {
 // Handle clicks on game over screen
 function handleGameOverClick() {
     if (state.isGameOver) {
-        const timeSinceGameOver = Date.now() - state.gameOverStartTime;
+        const timeSinceGameOver = state.currentTime - state.gameOverStartTime;
         if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
             restartGame();
         }
@@ -94,7 +94,7 @@ export function setupInputHandlers() {
     window.addEventListener('keydown', (event) => {
         // Check if game over - restart on any key if enough time has passed
         if (state.isGameOver) {
-            const timeSinceGameOver = Date.now() - state.gameOverStartTime;
+            const timeSinceGameOver = state.currentTime - state.gameOverStartTime;
             if (timeSinceGameOver >= GAME_OVER_CLICK_DELAY) {
                 event.preventDefault();
                 restartGame();

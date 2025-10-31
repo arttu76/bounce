@@ -27,7 +27,7 @@ export function triggerGameOver() {
     // Delay gameOverStartTime to allow death animation to complete
     Object.assign(state, {
         isGameOver: true,
-        gameOverStartTime: Date.now() + DEATH_ANIMATION_DURATION,
+        gameOverStartTime: state.currentTime + DEATH_ANIMATION_DURATION,
         isNewHighScore
     });
 
